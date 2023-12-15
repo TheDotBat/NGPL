@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "sdl.h": "c",
+        "core.h": "c",
+        "stdio.h": "c",
+        "objects.h": "c",
+        "common.h": "c",
+        "constants.h": "c",
+        "cfunc.h": "c",
+        "cstructs.h": "c"
+    }
+}
