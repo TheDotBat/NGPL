@@ -1,2 +1,4 @@
 assets/
 test/
+.vscode/
+runTest.bat
