@@ -1,6 +1,4 @@
 # Nebula Engine
-![NebulaWP](https://github.com/setoyuma/NebulaEngine/assets/118138305/02d0c151-5e1b-4aef-8afd-b32bef1cbfa8)
+![NebulaWP](https://images-ext-2.discordapp.net/external/ACmqwZci4ce49pQy9D3p7Wi_LmVjSxh6n6IpN2SGsjQ/https/repository-images.githubusercontent.com/732112944/c2d86da1-eda5-4443-a8cf-1731a46797b9?format=webp&width=1107&height=622)
 
-## A Game Engine As A Framework.
-
-(THIS README IS A WIP)
+## To The Stars.
