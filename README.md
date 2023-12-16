@@ -13,7 +13,7 @@ This guide provides step-by-step instructions on how to install Nebula on Window
 
 ## Step 1: Download Nebula
 
-1. Visit the official Nebula download page (provide the URL or source where Nebula can be downloaded).
+1. Visit the *Releases* section of the repository ( https://github.com/TheDotBat/Nebula/releases ).
 2. Download the latest version of the Nebula engine.
 3. Save the file to a location on your computer, such as `Downloads`.
 
