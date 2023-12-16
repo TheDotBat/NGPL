@@ -61,8 +61,6 @@ You should now be able to use the `compile-Nebula` script from any location in t
 
 ---
 
----
-
 # A Look at compile-Nebula
 
 The `compile-Nebula` script is a powerful tool designed to streamline the compilation process for projects using the Nebula engine. It simplifies the build process, allowing developers to compile their C projects with a single command and easily integrate custom libraries.
