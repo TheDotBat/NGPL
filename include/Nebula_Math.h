@@ -1,7 +1,8 @@
 #ifndef NEBULA_MATH_H
 #define NEBULA_MATH_H
 
-#include "Nebula.h"
+#include "Nebula_Core.h"
+
 
 // Types
 typedef SDL_Rect Rect;

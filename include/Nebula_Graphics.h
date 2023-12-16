@@ -1,7 +1,8 @@
 #ifndef NEBULA_GRAPHICS_H
 #define NEBULA_GRAPHICS_H
 
-#include "Nebula.h"
+#include "Nebula_Core.h"
+
 
 void Nebula_Blit(Renderer renderer);
 void Nebula_ClearScreen(Renderer renderer, int r, int g, int b, int a);

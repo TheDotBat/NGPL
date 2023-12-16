@@ -1,6 +1,6 @@
 #ifndef NEBULA_AUDIO_H
 #define NEBULA_AUDIO_H
 
-#include "Nebula.h"
+#include "Nebula_Core.h"
 
 #endif

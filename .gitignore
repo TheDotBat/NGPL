@@ -1,3 +1,16 @@
 test/
+lib/
+SDL2-2.28.5/
+setup/
+Nebula/
+include/*.dll
+include/SDL.h
+include/SDL_*
+include/begin_*
+include/close_*
+Nebula_x86/
+Nebula_x86_64/
 .vscode/
 runTest.bat
+comp.bat
+README.txt

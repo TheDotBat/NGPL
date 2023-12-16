@@ -59,7 +59,3 @@ void Nebula_InitSubSystem(Uint32 flags)
         printf("\nSubSystem Initialized!\n");
     }
 }
-
-
-
-
