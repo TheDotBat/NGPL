@@ -13,7 +13,7 @@ This guide provides step-by-step instructions on how to install Nebula on Window
 
 ## Step 1: Download Nebula
 
-1. Visit the *Releases* section of the repository.
+1. Visit the official Nebula download page (provide the URL or source where Nebula can be downloaded).
 2. Download the latest version of the Nebula engine.
 3. Save the file to a location on your computer, such as `Downloads`.
 
@@ -58,11 +58,6 @@ You should now be able to use the `compile-Nebula` script from any location in t
 
 - If the `compile-Nebula` script does not run, ensure that the path you added to the PATH variable is correct and points to the directory where `compile-Nebula.bat` is located.
 - Remember that changes to the PATH variable will only take effect in new Command Prompt windows. Existing windows will not reflect these changes.
-
-### Notes
-
-- The above instructions assume that the `compile-Nebula` script and other necessary files are included in the Nebula download and are located in the `Nebula_x86\scripts` directory of the extracted folder.
-- Adjust the paths and instructions as needed based on the actual structure and requirements of the Nebula engine.
 
 ---
 
