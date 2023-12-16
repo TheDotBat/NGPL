@@ -66,8 +66,6 @@ You should now be able to use the `compile-Nebula` script from any location in t
 
 ---
 
-Certainly! Here's the revised "A Look at compile-Nebula" section, now including a note about the requirement of having MinGW32 GCC properly installed for using the `compile-Nebula` script:
-
 ---
 
 # A Look at compile-Nebula
