@@ -50,7 +50,7 @@ To verify that Nebula has been successfully added to your PATH:
 3. Check if the Nebula path is listed in the output.
 4. Try running the `compile-Nebula` script by typing `compile-Nebula` followed by the project files you wish to compile.
 
-You should now be able to use the `compile-Nebula` script from any location in the Command Prompt on your Windows 11 system.
+You should now be able to use the `compile-Nebula` script from any location in the Command Prompt on your Windows system.
 
 ---
 
