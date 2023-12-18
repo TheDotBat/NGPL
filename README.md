@@ -7,6 +7,9 @@
 - Nebula is built upon version 2.28.5 of the SDL2 libraries.
 - It is recommended that developers also install MinGW32 GCC compiler to utilize Nebula as intended.
 
+## Get connected with the Nebula community:
+- Discord: https://discord.gg/YSYajYb7rS
+
 # Installation
 
 This guide provides step-by-step instructions on how to install Nebula on Windows.
