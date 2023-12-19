@@ -1,8 +1,8 @@
-#include "../../include/Nebula_Graphics.h"
+#include "../../include/NGPL_Graphics.h"
 
 
 /*
- * Function: Nebula_CreateWindow
+ * Function: NGPL_CreateWindow
  * -----------------------------------------
  * Creates a new window using SDL2.
  *
@@ -12,7 +12,7 @@
  *
  * returns: Pointer to the created Window, or NULL on failure
  */
-Window Nebula_CreateWindow(int width, int height, const char* title)
+Window NGPL_CreateWindow(int width, int height, const char* title)
 {
     Window window = SDL_CreateWindow(title,SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,SDL_WINDOW_SHOWN);
 
@@ -27,19 +27,19 @@ Window Nebula_CreateWindow(int width, int height, const char* title)
 }
 
 /*
- * Function: Nebula_CreateRenderer
+ * Function: NGPL_CreateRenderer
  * ---------------------------------
  * Attempts to create a renderer using SDL2.
  * Will return NULL and print an error message on fail.
  *
- * window: A pointer to an SDL2 window created with Nebula_CreateWindow()
+ * window: A pointer to an SDL2 window created with NGPL_CreateWindow()
  * driverIndex: An integer value indicating the rendering driver you wish to initialize. ( Use -1 to init the first one that supports your flags )
  * flags: Can be 0 or one or more valid SDL_RendererFlags OR'd together. ( Uses SDL_RENDERER_ACCELERATED by default ( Hardware acceleration ) )
  *
  * returns: A pointer to an SDL2 Renderer struct created with the passed parameters.
 */
 
-Renderer Nebula_CreateRenderer(Window window, int driverIndex, Uint32 flags)
+Renderer NGPL_CreateRenderer(Window window, int driverIndex, Uint32 flags)
 {
     Renderer r = SDL_CreateRenderer(window, driverIndex, flags);
     if (r == NULL)
@@ -50,16 +50,19 @@ Renderer Nebula_CreateRenderer(Window window, int driverIndex, Uint32 flags)
     return r;
 }
 
-void Nebula_ClearScreen(Renderer renderer, int r, int g, int b, int a)
+void NGPL_ClearScreen(Renderer renderer, int color[4])
 {
-    SDL_SetRenderDrawColor(renderer, r, g, b, a);
+    SDL_SetRenderDrawColor(renderer, color[0], color[1], color[2], color[3]);
     SDL_RenderClear(renderer);
 }
 
-void Nebula_Blit(Renderer renderer)
+void NGPL_SendFrame(Renderer renderer)
 {
-    
+    SDL_RenderPresent(renderer);
 }
 
-
-
+void NGPL_BlitRect(Renderer renderer, int color[4], Rect* rect)
+{
+    SDL_SetRenderDrawColor(renderer, color[0],color[1],color[2],color[3]);
+    SDL_RenderFillRect(renderer, rect);
+}

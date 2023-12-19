@@ -1,37 +1,42 @@
-# Nebula Engine
-![NebulaWP](https://images-ext-2.discordapp.net/external/ACmqwZci4ce49pQy9D3p7Wi_LmVjSxh6n6IpN2SGsjQ/https/repository-images.githubusercontent.com/732112944/c2d86da1-eda5-4443-a8cf-1731a46797b9?format=webp&width=1107&height=622)
+# NGPL ( Nebula's Graphics Programming Library )
+![NGPL](https://images-ext-2.discordapp.net/external/ACmqwZci4ce49pQy9D3p7Wi_LmVjSxh6n6IpN2SGsjQ/https/repository-images.githubusercontent.com/732112944/c2d86da1-eda5-4443-a8cf-1731a46797b9?format=webp&width=1107&height=622)
+
+NGPL is a versatile graphics programming library designed to simplify the development of high-performance graphical applications and GUIs. 
+
+Built on top of SDL2, NGPL offers a range of tools and functionalities that make it ideal for game development, interactive media, and GUI creation. 
+
+Whether you're a seasoned developer or just starting out, NGPL provides an accessible platform to bring your graphical projects to life.
 
 ## To The Stars.
 
-- Nebula-0.0.1 was compiled using MinGW32 GCC.
-- Nebula is built upon version 2.28.5 of the SDL2 libraries.
-- It is recommended that developers also install MinGW32 GCC compiler to utilize Nebula as intended.
 
-## Get connected with the Nebula community:
-- Discord: https://discord.gg/YSYajYb7rS
+
+- NGPL is compiled using MinGW32 GCC.
+- NGPL is built upon version 2.28.5 of the SDL2 libraries and 2.8.2 of the SDL2_Image libraries.
+- It is recommended that developers also install MinGW32 GCC compiler to utilize NGPL as intended.
 
 # Installation
 
-This guide provides step-by-step instructions on how to install Nebula on Windows.
+This guide provides step-by-step instructions on how to install NGPL on Windows.
 
-## Step 1: Download Nebula
+## Step 1: Download NGPL
 
-1. Visit the *Releases* section of the repository ( https://github.com/TheDotBat/Nebula/releases ).
-2. Download the latest version of the Nebula engine.
+1. Visit the *Releases* section of the repository ( https://github.com/TheDotBat/NGPL/releases ).
+2. Download the latest version of the NGPL engine.
 3. Save the file to a location on your computer, such as `Downloads`.
 
-## Step 2: Extract Nebula
+## Step 2: Extract NGPL
 
-1. Navigate to the location where you downloaded Nebula (e.g., `Downloads` folder).
+1. Navigate to the location where you downloaded NGPL (e.g., `Downloads` folder).
 2. Right-click on the downloaded file (it might be a `.zip` or `tar.gz` file) and select **Extract All...**.
-3. In the dialog that appears, choose the directory where you want to extract Nebula. This will be your Nebula installation directory. For example, you can create a new folder like `C:\Nebula` or `D:\MyProjects\Nebula`.
+3. In the dialog that appears, choose the directory where you want to extract NGPL. This will be your NGPL installation directory. For example, you can create a new folder like `C:\NGPL` or `D:\MyProjects\NGPL`.
 
-## Step 3: Add Nebula's scripts to the System PATH
+## Step 3: Add NGPL's scripts to the System PATH
 
-Adding Nebula's scripts to the system PATH allows you to run them from any command prompt location.
+Adding NGPL's scripts to the system PATH allows you to run them from any command prompt location.
 
-1. Locate your Nebula installation directory and note its **scripts** path. 
-    - For example: `C:\Nebula\Nebula_x86\scripts`
+1. Locate your NGPL installation directory and note its **scripts** path. 
+    - For example: `C:\NGPL\NGPL\scripts`
 2. Press the **Windows Key**, and type `Environment Variables`.
 3. Select the option that appears in the control panel.
     - If the above steps do not work, try these:
@@ -41,32 +46,32 @@ Adding Nebula's scripts to the system PATH allows you to run them from any comma
         - Click on the **Environment Variables...** button at the bottom.
 4. Under the **System variables** section, find and select the **Path** variable.
 5. Click **Edit...**.
-6. In the **Edit Environment Variable** window, click **New** and add the full path to your Nebula scripts directory (e.g., `C:\Nebula\Nebula_x86\scripts`).
+6. In the **Edit Environment Variable** window, click **New** and add the full path to your NGPL scripts directory (e.g., `C:\NGPL\NGPL\scripts`).
 7. Click **OK** to close each window.
 
 ## Step 4: Verify Installation
 
-To verify that Nebula has been successfully added to your PATH:
+To verify that NGPL has been successfully added to your PATH:
 
 1. Open a new Command Prompt window.
 2. Type `echo %PATH%` and press **Enter**.
-3. Check if the Nebula path is listed in the output.
-4. Try running the `compile-Nebula` script by typing `compile-Nebula` followed by the project files you wish to compile.
+3. Check if the NGPL path is listed in the output.
+4. Try running the `compile-NGPL` script by typing `compile-NGPL` followed by the project files you wish to compile.
 
-You should now be able to use the `compile-Nebula` script from any location in the Command Prompt on your Windows system.
+You should now be able to use the `compile-NGPL` script from any location in the Command Prompt on your Windows 11 system.
 
 ---
 
 ### Troubleshooting
 
-- If the `compile-Nebula` script does not run, ensure that the path you added to the PATH variable is correct and points to the directory where `compile-Nebula.bat` is located.
+- If the `compile-NGPL` script does not run, ensure that the path you added to the PATH variable is correct and points to the directory where `compile-NGPL.bat` is located.
 - Remember that changes to the PATH variable will only take effect in new Command Prompt windows. Existing windows will not reflect these changes.
 
 ---
 
-# A Look at compile-Nebula
+# A Look at compile-NGPL
 
-The `compile-Nebula` script is a powerful tool designed to streamline the compilation process for projects using the Nebula engine. It simplifies the build process, allowing developers to compile their C projects with a single command and easily integrate custom libraries.
+The `compile-NGPL` script is a powerful tool designed to streamline the compilation process for projects using the NGPL engine. It simplifies the build process, allowing developers to compile their C projects with a single command and easily integrate custom libraries.
 
 ## Prerequisites
 
@@ -74,7 +79,7 @@ The `compile-Nebula` script is a powerful tool designed to streamline the compil
 
 ## How it Works
 
-- **`compile-Nebula.bat`** is a batch script that automates the compilation of C files using the GCC compiler.
+- **`compile-NGPL.bat`** is a batch script that automates the compilation of C files using the GCC compiler.
 - It takes a C source file as input and produces an executable in the `dist` directory.
 
 ### Script Parameters
@@ -92,19 +97,19 @@ These optional arguments allow developers to include their project-specific head
 1. **Checks Input:** The script first checks if a source file has been provided. If not, it displays usage instructions.
 2. **Sets Variables:**
    - `INPUT_FILE` is set to the path of the source file.
-   - `INCLUDE_DIR` includes Nebula's include directory and any additional specified.
-   - `LIB_DIR` includes Nebula's library directory and any additional specified.
-   - `LIBS` specifies libraries to link (e.g., `-lNebula` for Nebula's library) along with any custom libraries.
+   - `INCLUDE_DIR` includes NGPL's include directory and any additional specified.
+   - `LIB_DIR` includes NGPL's library directory and any additional specified.
+   - `LIBS` specifies libraries to link (e.g., `-NGPL` for NGPL's library) along with any custom libraries.
 3. **Compilation Process:**
    - The script creates a `dist` directory if it doesn't exist.
-   - It copies `SDL2.dll` from Nebula's directory to `dist`.
+   - It copies `SDL2.dll` from NGPL's directory to `dist`.
    - It then invokes GCC to compile the source file, including the specified directories and linking the necessary libraries, including any specified custom libraries.
 4. **Outputs Executable:** The compiled executable is placed in the `dist` directory.
 
 ## Usage Example
 
 ```batch
-compile-Nebula.bat "path\to\source\file.c" "-Iadditional\include\path" "-Ladditional\lib\path" "-lsomeCustomLibrary -lanotherCustomLibrary"
+compile-NGPL.bat "path\to\source\file.c" "-Iadditional\include\path" "-Ladditional\lib\path" "-lsomeCustomLibrary -lanotherCustomLibrary"
 ```
 
 In this command:
@@ -119,6 +124,6 @@ This command compiles `file.c`, including headers from `additional\include\path`
 
 ### Customizing the Script
 
-Developers with specific needs can modify the `compile-Nebula.bat` script to fit their project's requirements, such as adding more compiler flags, handling different file types, or integrating with different build systems.
+Developers with specific needs can modify the `compile-NGPL.bat` script to fit their project's requirements, such as adding more compiler flags, handling different file types, or integrating with different build systems.
 
 ---
