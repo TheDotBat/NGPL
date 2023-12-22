@@ -15,6 +15,7 @@ gcc -c src\util\NGPL_Util.c -o NGPL\NGPL_x86\lib\NGPL_Util.o
 gcc -c src\graphics\NGPL_Graphics.c -o NGPL\NGPL_x86\lib\NGPL_Graphics.o
 gcc -c src\audio\NGPL_Audio.c -o NGPL\NGPL_x86\lib\NGPL_Audio.o
 gcc -c src\game\NGPLG.c -o NGPL\NGPL_x86\lib\NGPLG.o
+gcc -c src\game\NGPLG_Physics.c -o NGPL\NGPL_x86\lib\NGPLG_Physics.o
 
 :: Copy SDL2 object files before final static lib is created
 cd SDL2-2.28.5\lib

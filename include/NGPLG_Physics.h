@@ -19,13 +19,25 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef NGPL_H
-#define NGPL_H
+#ifndef NGPLG_PHYSICS_H
+#define NGPLG_PHYSICS_H
+#include "NGPLG.h"
 
-#include "NGPL_Core.h"
-#include "NGPL_Math.h"
-#include "NGPL_Util.h"
-#include "NGPL_Graphics.h"
-#include "NGPL_Audio.h"
+typedef enum Collisions
+{
+    NONE = 0,
+    TOP = 1 << 0,
+    BOTTOM = 1 << 1,
+    LEFT = 1 << 2,
+    RIGHT = 1 << 3,
+}Collisions;
+
+void NGPL_UpdateEntityX(NGPL_Entity* e, float deltaTime, float friction);
+
+void NGPL_UpdateEntityY(NGPL_Entity* e, float deltaTime);
+
+void NGPL_ApplyGravity(NGPL_Entity* e, float g);
+
+void NGPL_Physics(NGPL_EntityPool* pool, float friction, float gravity, float deltaTime);
 
 #endif

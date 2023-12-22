@@ -1,4 +1,5 @@
 #include "../../include/NGPLG.h"
+#include "../../include/NGPLG_Physics.h"
 
 
 /*
@@ -140,29 +141,19 @@ void NGPL_SetKeyBinds(SDL_Scancode moveLeft, SDL_Scancode moveRight, SDL_Scancod
  * Returns:
  *   Entity: The newly created and initialized game Entity.
  */
-NGPL_Entity* NGPL_CreateEntity(int color[4], float size[2], float position[2], int renderLayer, Renderer renderer, NGPL_Sprite* sprite) {
-    NGPL_Entity* entity = (NGPL_Entity*)malloc(sizeof(NGPL_Entity));
-    if (!entity) {
-        // Handle memory allocation failure
-        printf("MEM ERROR FOR ENTITY CREATION");
-        return NULL;
-    }
-
-    entity->size.x = size[0];
-    entity->size.y = size[1];
-    entity->position.x = position[0];
-    entity->position.y = position[1];
-    entity->velocity.x = 0.0;
-    entity->velocity.y = 0.0;
-
-    if (sprite) {
-        entity->sprite = sprite;
-    } else {
-        entity->sprite = NGPL_CreateSprite(NULL, position, size, renderLayer, renderer);
-    }
-
+NGPL_Entity NGPL_CreateEntity(int color[4], float size[2], float position[2], int renderLayer, Renderer renderer) {
+    NGPL_Entity entity;
+    entity.size.x = size[0];
+    entity.size.y = size[1];
+    entity.dynamic = false;
+    entity.mass = 100.0;
+    entity.position.x = position[0];
+    entity.position.y = position[1];
+    entity.velocity.x = 0.0;
+    entity.velocity.y = 0.0;
+    entity.sprite = NGPL_CreateSprite(position, size, renderLayer, renderer);
     for (int i = 0; i < 4; i++) {
-        entity->sprite->color[i] = color[i];
+        entity.sprite->color[i] = color[i];
     }
 
     return entity;
@@ -184,7 +175,7 @@ NGPL_Entity* NGPL_CreateEntity(int color[4], float size[2], float position[2], i
  * Returns:
  *   NGPL_Texture*: Pointer to the created SDL texture.
  */
-NGPL_Texture* NGPL_CreateTexture(Renderer renderer, int width, int height, const char* fp)
+NGPL_Texture* NGPL_CreateTexture(Renderer renderer, const char* fp)
 {
     if (!fp)
     {
@@ -455,18 +446,12 @@ void NGPL_DestroyAssetManager(NGPL_AssetManager *manager)
  * Returns:
  *   NGPL_Sprite*: Pointer to the newly created sprite.
  */
-NGPL_Sprite* NGPL_CreateSprite(NGPL_Texture* texture, float position[2], float size[2], int rendererLayer, Renderer renderer) {
+NGPL_Sprite* NGPL_CreateSprite(float position[2], float size[2], int rendererLayer, Renderer renderer) {
     NGPL_Sprite* sprite = (NGPL_Sprite*)malloc(sizeof(NGPL_Sprite));
     if (!sprite) {
         // Handle memory allocation failure
         printf("MEM ERROR FOR SPRITE CREATION");
         return NULL;
-    }
-
-    if (texture) {
-        sprite->texture = texture;
-    } else {
-        sprite->texture = NGPL_CreateTexture(renderer, (int)size[0], (int)size[1], NULL);
     }
     sprite->rect.w = size[0];
     sprite->rect.h = size[1];
@@ -485,11 +470,11 @@ NGPL_Sprite* NGPL_CreateSprite(NGPL_Texture* texture, float position[2], float s
  *   sdlRenderer: Pointer to the SDL renderer.
  *
  * Returns:
- *   NGPL_Renderer*: Pointer to the newly created rendering system.
+ *   NGPL_RenderSys*: Pointer to the newly created rendering system.
  */
-NGPL_Renderer* NGPL_CreateRenderSys(Renderer sdlRenderer)
+NGPL_RenderSys* NGPL_CreateRenderSys(Renderer sdlRenderer)
 {
-    NGPL_Renderer* renderer = (NGPL_Renderer*)malloc(sizeof(NGPL_Renderer));
+    NGPL_RenderSys* renderer = (NGPL_RenderSys*)malloc(sizeof(NGPL_RenderSys));
     if (renderer)
     {
         renderer->entities = (NGPL_Entity**)malloc(sizeof(NGPL_Entity*) * INITIAL_RENDER_SYS_CAPACITY);
@@ -512,9 +497,9 @@ NGPL_Renderer* NGPL_CreateRenderSys(Renderer sdlRenderer)
  * Cleans up and frees resources allocated for a rendering system.
  *
  * Parameters:
- *   renderer: Pointer to the NGPL_Renderer to be destroyed.
+ *   renderer: Pointer to the NGPL_RenderSys to be destroyed.
  */
-void NGPL_DestroyRenderSys(NGPL_Renderer* renderer) 
+void NGPL_DestroyRenderSys(NGPL_RenderSys* renderer) 
 {
     if (renderer) 
     {
@@ -542,12 +527,12 @@ void NGPL_DestroyRenderSys(NGPL_Renderer* renderer)
  * Adds a sprite struct from a NGPL_Sprite pointer passed in, to the rendering system.
  *
  * Parameters:
- *   renderer: Pointer to the NGPL_Renderer.
+ *   renderer: Pointer to the NGPL_RenderSys.
  *   texture: Pointer to the SDL_Texture to be used for the sprite.
  *   rect: SDL_Rect structure defining the sprite's position and size.
  *   layer: Integer specifying the rendering layer of the sprite.
  */
-void NGPL_RSAddEntity(NGPL_Renderer* renderer, NGPL_Entity* entity)
+void NGPL_RSAddEntity(NGPL_RenderSys* renderer, NGPL_Entity* entity)
 {
     if (entity == NULL || entity->sprite == NULL)
     {
@@ -577,19 +562,16 @@ void NGPL_RSAddEntity(NGPL_Renderer* renderer, NGPL_Entity* entity)
  * Removes a sprite from the rendering system.
  *
  * Parameters:
- *   renderer: Pointer to the NGPL_Renderer.
+ *   renderer: Pointer to the NGPL_RenderSys.
  *   texture: Pointer to the SDL_Texture of the sprite to be removed.
  */
-void NGPL_RSRemoveEntity(NGPL_Renderer* renderer, NGPL_Texture* texture)
+void NGPL_RSRemoveEntity(NGPL_RenderSys* renderer, NGPL_Texture* texture)
 {
     for (int i = 0; i < renderer->entityCount; i++) 
     {
-        if (renderer->entities[i]->sprite && renderer->entities[i]->sprite->texture == texture) 
-        {
-            memmove(&renderer->entities[i], &renderer->entities[i + 1], sizeof(NGPL_Entity*) * (renderer->entityCount - i - 1));
-            renderer->entityCount--;
-            break;
-        }
+        memmove(&renderer->entities[i], &renderer->entities[i + 1], sizeof(NGPL_Entity*) * (renderer->entityCount - i - 1));
+        renderer->entityCount--;
+        break;
     }
 }
 
@@ -621,9 +603,9 @@ int NGPL_RSCompareEntities(const void* a, const void* b)
  * Sorts entities in a rendering system based on their layer.
  * * This function is used within NGPL_RSRender(). There really shouldn't be a need for you to call it again.
  * Parameters:
- *   renderer: Pointer to the NGPL_Renderer.
+ *   renderer: Pointer to the NGPL_RenderSys.
  */
-void NGPL_RSSortEntities(NGPL_Renderer* renderer)
+void NGPL_RSSortEntities(NGPL_RenderSys* renderer)
 {
     qsort(renderer->entities, renderer->entityCount, sizeof(NGPL_Entity*), NGPL_RSCompareEntities);
 }
@@ -635,9 +617,9 @@ void NGPL_RSSortEntities(NGPL_Renderer* renderer)
  * If an Entity's sprite->texture is NULL then it will render that sprite's rect.
  *
  * Parameters:
- *   renderer: Pointer to the NGPL_Renderer.
+ *   renderer: Pointer to the NGPL_RenderSys.
  */
-void NGPL_RSRender(NGPL_Renderer* renderer, int clearColor[4])
+void NGPL_RSRender(NGPL_RenderSys* renderer, int clearColor[4], bool showRect)
 {
     NGPL_RSSortEntities(renderer);
 
@@ -646,20 +628,14 @@ void NGPL_RSRender(NGPL_Renderer* renderer, int clearColor[4])
     for (int i = 0; i < renderer->entityCount; i++)
     {
         NGPL_Entity* entity = renderer->entities[i];
-        if (entity && entity->sprite)
-        {
-            NGPL_Sprite* sprite = entity->sprite;
-            Rect renderRect = sprite->rect;
-            renderRect.x = entity->position.x;
-            renderRect.y = entity->position.y;
+        NGPL_Sprite* sprite = entity->sprite;
+        Rect renderRect = sprite->rect;
 
-            if (sprite->texture)
-            {
-                SDL_RenderCopy(renderer->sdlRenderer, sprite->texture, NULL, &renderRect);
-            } else {
-                NGPL_BlitRect(renderer->sdlRenderer, sprite->color, &renderRect);
-            }
+        if (showRect)
+        {
+            NGPL_BlitRect(renderer->sdlRenderer, sprite->color, &renderRect);
         }
+        SDL_RenderCopy(renderer->sdlRenderer, sprite->image, NULL, &renderRect);
     }
 }
 
@@ -682,10 +658,7 @@ void NGPL_DestroySprite(NGPL_Sprite* sprite)
     if (sprite) 
     {
         // Assuming the sprite owns the texture and should free it
-        if (sprite->texture) 
-        {
-            NGPL_DestroyTexture(sprite->texture);
-        }
+        NGPL_DestroyTexture(sprite->image);
         free(sprite);
     }
 }
@@ -696,49 +669,62 @@ void NGPL_DestroySprite(NGPL_Sprite* sprite)
  * Frees all resources used by the game, including rendering system and asset manager.
  *
  * Parameters:
- *   renderSys: Pointer to the NGPL_Renderer to be cleaned up.
+ *   renderSys: Pointer to the NGPL_RenderSys to be cleaned up.
  *   assetManager: Pointer to the NGPL_AssetManager to be cleaned up.
  */
-void NGPL_CleanUpG(NGPL_Renderer* renderSys, NGPL_AssetManager* assetManager)
+void NGPL_CleanUpG(NGPL_RenderSys* renderSys, NGPL_AssetManager* assetManager)
 {
     NGPL_DestroyRenderSys(renderSys);
     NGPL_DestroyAssetManager(assetManager);
 }
 
-/*
- * Function: NGPL_SetEntityTexture
- * -------------------------------
- * Associates a texture with a given entity by setting the texture of the entity's sprite.
- * This function is used to define or change the visual representation of an entity.
- *
- * Parameters:
- *   entity: Pointer to the NGPL_Entity for which the texture is to be set.
- *   texture: Pointer to the NGPL_Texture to be associated with the entity's sprite.
- *
- * Note:
- *   This function does not handle the memory management of the texture. It only links
- *   the texture to the entity's sprite.
- */
-void NGPL_SetEntityTexture(NGPL_Entity* entity, NGPL_Texture* texture)
+NGPL_EntityPool NGPL_CreateEntityPool(int size)
 {
-    entity->sprite->texture = texture;
+    // Allocate memory for an array of NGPL_Entity pointers
+    NGPL_Entity** pool_1 = malloc(size * sizeof(NGPL_Entity*));
+    if (pool_1 == NULL)
+    {
+        printf("Pool malloc failed\n");
+    }
+    NGPL_EntityPool pool = {pool_1, 0, size};
+    return pool;
 }
 
-/*
- * Function: NGPL_SetSpriteTexture
- * --------------------------------
- * Assigns a texture to a sprite. This function is used to define or change the visual
- * representation of a sprite.
- *
- * Parameters:
- *   sprite: Pointer to the NGPL_Sprite to which the texture is to be assigned.
- *   texture: Pointer to the NGPL_Texture that will be used as the sprite's texture.
- *
- * Note:
- *   Like NGPL_SetEntityTexture, this function links the texture to the sprite but
- *   does not take ownership of the texture's memory.
- */
-void NGPL_SetSpriteTexture(NGPL_Sprite* sprite, NGPL_Texture* texture)
+void NGPL_AddToPool(NGPL_EntityPool* pool, NGPL_Entity* entity)
 {
-    sprite->texture = texture;
+    if (pool->count < pool->maxSize)
+    {
+        pool->pool[pool->count] = entity;
+        pool->count++;
+    } else {
+        printf("Pool is full, cannot add more entities.\n");
+    }
 }
+
+void NGPL_FreePool(NGPL_EntityPool* pool)
+{
+    free(pool->pool);
+}
+
+void NGPL_SetDynamic(NGPL_Entity* entity, bool dynamic)
+{
+    entity->dynamic = dynamic;
+}
+
+void NGPL_SetMass(NGPL_Entity* entity, float mass)
+{
+    entity->mass = mass;
+}
+
+void NGPL_SetSpriteImage(NGPL_Entity e, NGPL_Texture* texture)
+{
+    e.sprite->image = texture;
+}
+void NGPL_LoadSetSpriteImage(NGPL_Entity e, Renderer renderer, const char* fp)
+{
+    NGPL_Texture* texture = NGPL_CreateTexture(renderer, fp);
+    e.sprite->image = texture;
+}
+
+
+

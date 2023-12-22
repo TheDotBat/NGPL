@@ -1,3 +1,24 @@
+/*
+  Nebula's Graphics Programming Library 
+  2023-2023 Setoichi Yumaden <setoichi.dev@gmail.com>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+*/
+
 #ifndef NGPLG_H
 #define NGPLG_H
 #include "NGPL.h"
@@ -22,12 +43,14 @@ typedef struct Tile {
     int color[4];
 } Tile;
 
-typedef struct NGPL_Sprite {
+
+typedef struct NGPL_Sprite
+{
     int color[4];
-    NGPL_Texture* texture;
-    Rect rect;
     int renderLayer;
-} NGPL_Sprite;
+    NGPL_Texture* image;
+    Rect rect;
+}NGPL_Sprite;
 
 /*
  * Struct: Entity
@@ -43,12 +66,26 @@ typedef struct NGPL_Sprite {
  *   velocity: A Vector2D representing the object's velocity.
  *   color: An array of 4 integers representing the RGBA color of the object.
  */
-typedef struct NGPL_Entity {
+typedef struct NGPL_Entity
+{
+    NGPL_Sprite* sprite;
     Vector2D size;
     Vector2D position;
     Vector2D velocity;
-    NGPL_Sprite* sprite;
-} NGPL_Entity;
+    bool dynamic;
+    float mass;
+}NGPL_Entity;
+
+typedef struct Collider2D {
+    Vector2D position;
+    Vector2D size;
+} Collider2D;
+
+typedef struct NGPL_EntityPool {
+    NGPL_Entity** pool; // Double pointer
+    int count;
+    int maxSize;
+} NGPL_EntityPool;
 
 typedef struct NGPL_TextureCacheEntry {
     char key[MAX_CACHE_KEY_SIZE];
@@ -66,13 +103,13 @@ typedef struct NGPL_AssetManager {
     NGPL_TextureCache *textureCache;
 } NGPL_AssetManager;
 
-typedef struct NGPL_Renderer {
+typedef struct NGPL_RenderSys {
     NGPL_Entity** entities;
     int entityCount;
     int capacity;
     Renderer sdlRenderer;
     Rect viewport;  // Defines the visible area
-} NGPL_Renderer;
+} NGPL_RenderSys;
 
 /*
  * Enum: PlayerActions
@@ -199,7 +236,7 @@ void NGPL_SetKeyBinds(SDL_Scancode moveLeft, SDL_Scancode moveRight, SDL_Scancod
  * Returns:
  *   Entity: The newly created and initialized game object.
  */
-NGPL_Entity* NGPL_CreateEntity(int color[4], float size[2], float position[2], int renderLayer, Renderer renderer, NGPL_Sprite* sprite);
+NGPL_Entity NGPL_CreateEntity(int color[4], float size[2], float position[2],int renderLayer, Renderer renderer);
 
 /*
  * Function: NGPL_CreateTexture
@@ -217,7 +254,7 @@ NGPL_Entity* NGPL_CreateEntity(int color[4], float size[2], float position[2], i
  * Returns:
  *   NGPL_Texture*: Pointer to the created SDL texture.
  */
-NGPL_Texture* NGPL_CreateTexture(Renderer renderer, int width, int height, const char* fp);
+NGPL_Texture* NGPL_CreateTexture(Renderer renderer, const char* fp);
 
 /*
  * Function: NGPL_DestroyTexture
@@ -376,7 +413,7 @@ void NGPL_DestroyAssetManager(NGPL_AssetManager* manager);
  * Returns:
  *   NGPL_Sprite*: Pointer to the newly created sprite.
  */
-NGPL_Sprite* NGPL_CreateSprite(NGPL_Texture* texture, float position[2], float size[2], int rendererLayer, Renderer renderer);
+NGPL_Sprite* NGPL_CreateSprite( float position[2], float size[2], int rendererLayer, Renderer renderer);
 
 /*
  * Function: NGPL_CreateRenderSys
@@ -387,9 +424,9 @@ NGPL_Sprite* NGPL_CreateSprite(NGPL_Texture* texture, float position[2], float s
  *   sdlRenderer: Pointer to the SDL renderer.
  *
  * Returns:
- *   NGPL_Renderer*: Pointer to the newly created rendering system.
+ *   NGPL_RenderSys*: Pointer to the newly created rendering system.
  */
-NGPL_Renderer* NGPL_CreateRenderSys(Renderer sdlRenderer);
+NGPL_RenderSys* NGPL_CreateRenderSys(Renderer sdlRenderer);
 
 /*
  * Function: NGPL_DestroyRenderSys
@@ -397,9 +434,9 @@ NGPL_Renderer* NGPL_CreateRenderSys(Renderer sdlRenderer);
  * Cleans up and frees resources allocated for a rendering system.
  *
  * Parameters:
- *   renderer: Pointer to the NGPL_Renderer to be destroyed.
+ *   renderer: Pointer to the NGPL_RenderSys to be destroyed.
  */
-void NGPL_DestroyRenderSys(NGPL_Renderer* renderer);
+void NGPL_DestroyRenderSys(NGPL_RenderSys* renderer);
 
 /*
  * Function: NGPL_RSAddEntity
@@ -407,12 +444,12 @@ void NGPL_DestroyRenderSys(NGPL_Renderer* renderer);
  * Adds a sprite struct from a NGPL_Sprite pointer passed in, to the rendering system.
  *
  * Parameters:
- *   renderer: Pointer to the NGPL_Renderer.
+ *   renderer: Pointer to the NGPL_RenderSys.
  *   texture: Pointer to the SDL_Texture to be used for the sprite.
  *   rect: SDL_Rect structure defining the sprite's position and size.
  *   layer: Integer specifying the rendering layer of the sprite.
  */
-void NGPL_RSAddEntity(NGPL_Renderer* renderer, NGPL_Entity* entity);
+void NGPL_RSAddEntity(NGPL_RenderSys* renderer, NGPL_Entity* entity);
 
 /*
  * Function: NGPL_RSRemoveEntity
@@ -420,10 +457,10 @@ void NGPL_RSAddEntity(NGPL_Renderer* renderer, NGPL_Entity* entity);
  * Removes a sprite from the rendering system.
  *
  * Parameters:
- *   renderer: Pointer to the NGPL_Renderer.
+ *   renderer: Pointer to the NGPL_RenderSys.
  *   texture: Pointer to the SDL_Texture of the sprite to be removed.
  */
-void NGPL_RSRemoveEntity(NGPL_Renderer* renderer, NGPL_Texture* texture);
+void NGPL_RSRemoveEntity(NGPL_RenderSys* renderer, NGPL_Texture* texture);
 
 /*
  * Function: NGPL_RSCompareEntities
@@ -447,9 +484,9 @@ int NGPL_RSCompareEntities(const void* a, const void* b);
  * Sorts entities in a rendering system based on their layer.
  * * This function is used within NGPL_RSRender(). There really shouldn't be a need for you to call it again.
  * Parameters:
- *   renderer: Pointer to the NGPL_Renderer.
+ *   renderer: Pointer to the NGPL_RenderSys.
  */
-void NGPL_RSSortEntities(NGPL_Renderer* renderer);
+void NGPL_RSSortEntities(NGPL_RenderSys* renderer);
 
 /*
  * Function: NGPL_RSRender
@@ -458,9 +495,9 @@ void NGPL_RSSortEntities(NGPL_Renderer* renderer);
  * If an Entity's sprite->texture is NULL then it will render that sprite's rect.
  *
  * Parameters:
- *   renderer: Pointer to the NGPL_Renderer.
+ *   renderer: Pointer to the NGPL_RenderSys.
  */
-void NGPL_RSRender(NGPL_Renderer* renderer, int clearColor[4]);
+void NGPL_RSRender(NGPL_RenderSys* renderer, int clearColor[4], bool showRect);
 
 /*
  * Function: NGPL_DestroySprite
@@ -484,41 +521,24 @@ void NGPL_DestroySprite(NGPL_Sprite* sprite);
  * Frees all resources used by the game, including rendering system and asset manager.
  *
  * Parameters:
- *   renderSys: Pointer to the NGPL_Renderer to be cleaned up.
+ *   renderSys: Pointer to the NGPL_RenderSys to be cleaned up.
  *   assetManager: Pointer to the NGPL_AssetManager to be cleaned up.
  */
-void NGPL_CleanUpG(NGPL_Renderer* renderSys, NGPL_AssetManager* assetManager);
+void NGPL_CleanUpG(NGPL_RenderSys* renderSys, NGPL_AssetManager* assetManager);
 
-/*
- * Function: NGPL_SetEntityTexture
- * -------------------------------
- * Associates a texture with a given entity by setting the texture of the entity's sprite.
- * This function is used to define or change the visual representation of an entity.
- *
- * Parameters:
- *   entity: Pointer to the NGPL_Entity for which the texture is to be set.
- *   texture: Pointer to the NGPL_Texture to be associated with the entity's sprite.
- *
- * Note:
- *   This function does not handle the memory management of the texture. It only links
- *   the texture to the entity's sprite.
- */
-void NGPL_SetEntityTexture(NGPL_Entity* entity, NGPL_Texture* texture);
+NGPL_EntityPool NGPL_CreateEntityPool(int size);
 
-/*
- * Function: NGPL_SetSpriteTexture
- * --------------------------------
- * Assigns a texture to a sprite. This function is used to define or change the visual
- * representation of a sprite.
- *
- * Parameters:
- *   sprite: Pointer to the NGPL_Sprite to which the texture is to be assigned.
- *   texture: Pointer to the NGPL_Texture that will be used as the sprite's texture.
- *
- * Note:
- *   Like NGPL_SetEntityTexture, this function links the texture to the sprite but
- *   does not take ownership of the texture's memory.
- */
-void NGPL_SetSpriteTexture(NGPL_Sprite* sprite, NGPL_Texture* texture);
+void NGPL_AddToPool(NGPL_EntityPool* pool, NGPL_Entity* entity);
 
+void NGPL_FreePool(NGPL_EntityPool* pool);
+
+void NGPL_SetDynamic(NGPL_Entity* entity, bool dynamic);
+
+void NGPL_SetMass(NGPL_Entity* entity, float mass);
+
+void NGPL_SetSpriteImage(NGPL_Entity e, NGPL_Texture* texture);
+
+void NGPL_LoadSetSpriteImage(NGPL_Entity e, Renderer renderer, const char* fp);
+
+#include "NGPLG_Physics.h"
 #endif
