@@ -8,9 +8,6 @@ Built on top of SDL2, NGPL offers a range of tools and functionalities that make
 Whether you're a seasoned developer or just starting out, NGPL provides an accessible platform to bring your graphical projects to life.
 
 ## To The Stars.
-
-
-
 - NGPL is compiled using MinGW32 GCC.
 - NGPL is built upon version 2.28.5 of the SDL2 libraries and 2.8.2 of the SDL2_Image libraries.
 - It is recommended that developers also install MinGW32 GCC compiler to utilize NGPL as intended.
@@ -58,7 +55,15 @@ To verify that NGPL has been successfully added to your PATH:
 3. Check if the NGPL path is listed in the output.
 4. Try running the `compile-NGPL` script by typing `compile-NGPL` followed by the project files you wish to compile.
 
-You should now be able to use the `compile-NGPL` script from any location in the Command Prompt on your Windows 11 system.
+    - **You Should See This Error Message**:
+  ![Alt text](image.png)
+
+5. Simply type the command presented in the error message. 
+    - For example: ```setx NGPL_DIR "C:\Path\To\NGPL\NGPL_x86"``` and you should be all set.
+6. Now try running compile-NGPL on your project files again...
+    - ![Alt text](image-1.png)
+
+You should now be able to use the `compile-NGPL` script from any location in the Command Prompt on your Windows system.
 
 ---
 

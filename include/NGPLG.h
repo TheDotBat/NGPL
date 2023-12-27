@@ -46,10 +46,18 @@ typedef struct Tile {
 
 typedef struct NGPL_Sprite
 {
-    int color[4];
+    NGPL_Color color;
     int renderLayer;
     NGPL_Texture* image;
     Rect rect;
+    float rectTopLeft[2];
+    float rectTop[2];
+    float rectTopRight[2];
+    float rectMidLeft[2];
+    float rectMidRight[2];
+    float rectBottomLeft[2];
+    float rectBottom[2];
+    float rectBottomRight[2];
 }NGPL_Sprite;
 
 /*
@@ -68,6 +76,8 @@ typedef struct NGPL_Sprite
  */
 typedef struct NGPL_Entity
 {
+    int poolID;
+    const char* tag;
     NGPL_Sprite* sprite;
     Vector2D size;
     Vector2D position;
@@ -76,10 +86,6 @@ typedef struct NGPL_Entity
     float mass;
 }NGPL_Entity;
 
-typedef struct Collider2D {
-    Vector2D position;
-    Vector2D size;
-} Collider2D;
 
 typedef struct NGPL_EntityPool {
     NGPL_Entity** pool; // Double pointer
@@ -497,7 +503,7 @@ void NGPL_RSSortEntities(NGPL_RenderSys* renderer);
  * Parameters:
  *   renderer: Pointer to the NGPL_RenderSys.
  */
-void NGPL_RSRender(NGPL_RenderSys* renderer, int clearColor[4], bool showRect);
+//void NGPL_RSRender(NGPL_RenderSys* renderer, int clearColor[4], bool showRect);
 
 /*
  * Function: NGPL_DestroySprite
@@ -539,6 +545,15 @@ void NGPL_SetMass(NGPL_Entity* entity, float mass);
 void NGPL_SetSpriteImage(NGPL_Entity e, NGPL_Texture* texture);
 
 void NGPL_LoadSetSpriteImage(NGPL_Entity e, Renderer renderer, const char* fp);
+
+void NGPL_SetSpriteRectPoints(NGPL_Sprite* sprite);
+
+void NGPL_LogEntityPoolID(NGPL_Entity* e);
+
+int NGPL_GetEntityPoolID(NGPL_Entity* e);
+
+void NGPL_SetEntityTag(const char* tag, NGPL_Entity* e);
+
 
 #include "NGPLG_Physics.h"
 #endif

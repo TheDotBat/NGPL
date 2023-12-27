@@ -40,22 +40,31 @@ xcopy SDL2-2.28.5\*.dll NGPL\NGPL_x86
 echo Creating compile-NGPL.bat file...
 (
     echo @echo off
-    echo if "%%~1"=="" ^(
+    echo if "%%~1"=="^" (
     echo    echo Usage: compile-NGPL.bat [path_to_c_file] [additional_include_dirs] [additional_lib_dirs] [additional_libraries]
-    echo    exit \b 1
+    echo    exit /b 1
     echo ^)
     echo.
     echo set INPUT_FILE=%%~1
     echo set ADDITIONAL_INCLUDES=%%~2
     echo set ADDITIONAL_LIBS=%%~3
     echo set CUSTOM_LIBS=%%~4
-    echo set INCLUDE_DIR=-I.\NGPL\NGPL_x86\include %%ADDITIONAL_INCLUDES%%
-    echo set LIB_DIR=-L.\NGPL\NGPL_x86\lib %%ADDITIONAL_LIBS%%
+    echo.
+    echo REM Check for NGPL_DIR environment variable
+    echo if not defined NGPL_DIR ^(
+    echo    echo NGPL directory not set. Please set the NGPL_DIR environment variable.
+    echo    echo Type the following command: setx NGPL_DIR "C:\Path\To\NGPL\NGPL_x86"
+    echo    exit /b 1
+    echo ^)
+    echo.
+    echo REM Use the NGPL_DIR environment variable
+    echo set INCLUDE_DIR=-I%%NGPL_DIR%%\include %%ADDITIONAL_INCLUDES%%
+    echo set LIB_DIR=-L%%NGPL_DIR%%\lib %%ADDITIONAL_LIBS%%
     echo set LIBS=-lNGPL %%CUSTOM_LIBS%%
     echo.
     echo echo Compiling %%INPUT_FILE%%...
     echo if not exist dist mkdir dist
-    echo xcopy NGPL\NGPL_x86\*.dll dist
+    echo xcopy %%NGPL_DIR%%\*.dll dist
     echo gcc %%INPUT_FILE%% %%INCLUDE_DIR%% %%LIB_DIR%% %%LIBS%% -o dist\%%~n1.exe
     echo.
     echo echo Compilation complete! Executable: %%~n1.exe

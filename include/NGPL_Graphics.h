@@ -24,6 +24,8 @@
 #include "NGPL.h"
 
 
+typedef SDL_Color NGPL_Color;
+
 /*
  * Function: NGPL_CreateWindow
  * -----------------------------------------
@@ -87,24 +89,6 @@ void NGPL_ClearScreen(Renderer renderer, int color[4]);
  */
 void NGPL_SendFrame(Renderer renderer);
 
-/*
- * Function: NGPL_BlitRect
- * -----------------------------------------
- * Fills a rectangular area on the screen with the specified color.
- *
- * This function sets the render draw color for the provided renderer and then
- * fills a specified rectangular area with that color. It can be used for rendering
- * simple colored shapes like backgrounds, UI elements, or debug visuals.
- *
- * Parameters:
- *   renderer: The SDL_Renderer object used for rendering.
- *   color: An array of 4 integers representing the RGBA values of the fill color.
- *   rect: A pointer to an SDL_Rect struct defining the position and size of the rectangle.
- *
- * Returns:
- *   void: This function does not return a value.
- */
-void NGPL_BlitRect(Renderer renderer, int color[4], Rect* rect);
-
+void NGPL_BlitCircleF(Renderer renderer, int x, int y, int radius);
 
 #endif

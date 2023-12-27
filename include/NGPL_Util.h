@@ -141,5 +141,6 @@ float NGPL_GetDeltaTime(Clock* clock);
  */
 void NGPL_CapFPS(Clock* clock);
 
+int NGPL_IsMouseHover(int mouseX, int mouseY, int pointX, int pointY, int size);
 
 #endif

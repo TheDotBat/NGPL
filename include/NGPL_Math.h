@@ -23,6 +23,8 @@
 #define NGPL_MATH_H
 #include "NGPL.h"
 
+#define max(a,b) (((a) > (b)) ? (a) : (b))
+#define min(a,b) (((a) < (b)) ? (a) : (b))
 
 // Structs
 

@@ -61,8 +61,19 @@ void NGPL_SendFrame(Renderer renderer)
     SDL_RenderPresent(renderer);
 }
 
-void NGPL_BlitRect(Renderer renderer, int color[4], Rect* rect)
+void NGPL_BlitCircleF(Renderer renderer, int x, int y, int radius)
 {
-    SDL_SetRenderDrawColor(renderer, color[0],color[1],color[2],color[3]);
-    SDL_RenderFillRect(renderer, rect);
+    for (int w = 0; w < radius * 2; w++) {
+        for (int h = 0; h < radius * 2; h++) {
+            int dx = radius - w;
+            int dy = radius - h;
+            if ((dx*dx + dy*dy) <= (radius * radius)) {
+                SDL_RenderDrawPoint(renderer, x + dx, y + dy);
+            }
+        }
+    }
 }
+
+
+
+

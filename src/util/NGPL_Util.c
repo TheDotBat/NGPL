@@ -155,4 +155,11 @@ void NGPL_CapFPS(Clock* clock) {
     }
 }
 
+int NGPL_IsMouseHover(int mouseX, int mouseY, int pointX, int pointY, int size)
+{
+    return (mouseX >= pointX - size/2 && mouseX <= pointX + size/2 &&
+            mouseY >= pointY - size/2 && mouseY <= pointY + size/2);
+}
+
+
 

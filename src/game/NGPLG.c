@@ -143,6 +143,7 @@ void NGPL_SetKeyBinds(SDL_Scancode moveLeft, SDL_Scancode moveRight, SDL_Scancod
  */
 NGPL_Entity NGPL_CreateEntity(int color[4], float size[2], float position[2], int renderLayer, Renderer renderer) {
     NGPL_Entity entity;
+    entity.tag = NULL;
     entity.size.x = size[0];
     entity.size.y = size[1];
     entity.dynamic = false;
@@ -152,9 +153,10 @@ NGPL_Entity NGPL_CreateEntity(int color[4], float size[2], float position[2], in
     entity.velocity.x = 0.0;
     entity.velocity.y = 0.0;
     entity.sprite = NGPL_CreateSprite(position, size, renderLayer, renderer);
-    for (int i = 0; i < 4; i++) {
-        entity.sprite->color[i] = color[i];
-    }
+    entity.sprite->color.r = color[0];
+    entity.sprite->color.g = color[1];
+    entity.sprite->color.b = color[2];
+    entity.sprite->color.a = color[3];
 
     return entity;
 }
@@ -446,7 +448,8 @@ void NGPL_DestroyAssetManager(NGPL_AssetManager *manager)
  * Returns:
  *   NGPL_Sprite*: Pointer to the newly created sprite.
  */
-NGPL_Sprite* NGPL_CreateSprite(float position[2], float size[2], int rendererLayer, Renderer renderer) {
+NGPL_Sprite* NGPL_CreateSprite(float position[2], float size[2], int rendererLayer, Renderer renderer)
+{
     NGPL_Sprite* sprite = (NGPL_Sprite*)malloc(sizeof(NGPL_Sprite));
     if (!sprite) {
         // Handle memory allocation failure
@@ -458,6 +461,7 @@ NGPL_Sprite* NGPL_CreateSprite(float position[2], float size[2], int rendererLay
     sprite->rect.x = position[0];
     sprite->rect.y = position[1];
     sprite->renderLayer = rendererLayer;
+    NGPL_SetSpriteRectPoints(sprite);
     return sprite;
 }
 
@@ -633,7 +637,7 @@ void NGPL_RSRender(NGPL_RenderSys* renderer, int clearColor[4], bool showRect)
 
         if (showRect)
         {
-            NGPL_BlitRect(renderer->sdlRenderer, sprite->color, &renderRect);
+            //NGPL_BlitRect(renderer->sdlRenderer, &renderRect);
         }
         SDL_RenderCopy(renderer->sdlRenderer, sprite->image, NULL, &renderRect);
     }
@@ -695,6 +699,7 @@ void NGPL_AddToPool(NGPL_EntityPool* pool, NGPL_Entity* entity)
     if (pool->count < pool->maxSize)
     {
         pool->pool[pool->count] = entity;
+        entity->poolID = pool->count;
         pool->count++;
     } else {
         printf("Pool is full, cannot add more entities.\n");
@@ -720,11 +725,66 @@ void NGPL_SetSpriteImage(NGPL_Entity e, NGPL_Texture* texture)
 {
     e.sprite->image = texture;
 }
+
 void NGPL_LoadSetSpriteImage(NGPL_Entity e, Renderer renderer, const char* fp)
 {
     NGPL_Texture* texture = NGPL_CreateTexture(renderer, fp);
     e.sprite->image = texture;
 }
 
+void NGPL_SetSpriteRectPoints(NGPL_Sprite* sprite)
+{
+    float TL[] = {(float)sprite->rect.x, sprite->rect.y};
+    sprite->rectTopLeft[0] = TL[0];
+    sprite->rectTopLeft[1] = TL[1];
+    
+    float T[] = {(float)sprite->rect.x+sprite->rect.w/2, sprite->rect.y};
+    sprite->rectTop[0] = T[0];
+    sprite->rectTop[1] = T[1];
+    
+    float TR[] = {(float)sprite->rect.x+sprite->rect.w, sprite->rect.y};
+    sprite->rectTopRight[0] = TR[0];
+    sprite->rectTopRight[1] = TR[1];
+    
+    float ML[] = {(float)sprite->rect.x, sprite->rect.y+sprite->rect.h/2};
+    sprite->rectMidLeft[0] = ML[0];
+    sprite->rectMidLeft[1] = ML[1];
+    
+    float MR[] = {(float)sprite->rect.x+sprite->rect.w, sprite->rect.y+sprite->rect.h/2};
+    sprite->rectMidRight[0] = MR[0];
+    sprite->rectMidRight[1] = MR[1];
+    
+    float BL[] = {(float)sprite->rect.x, sprite->rect.y+sprite->rect.h};
+    sprite->rectBottomLeft[0] = BL[0];
+    sprite->rectBottomLeft[1] = BL[1];
+    
+    float B[] = {(float)sprite->rect.x+sprite->rect.w/2, sprite->rect.y+sprite->rect.h};
+    sprite->rectBottom[0] = B[0];
+    sprite->rectBottom[1] = B[1];
+    
+    float BR[] = {(float)sprite->rect.x+sprite->rect.w, sprite->rect.y+sprite->rect.h};
+    sprite->rectBottomRight[0] = BR[0];
+    sprite->rectBottomRight[1] = BR[1];
+}
+
+void NGPL_LogEntityPoolID(NGPL_Entity* e)
+{
+    if (!e->tag)
+    {
+        printf("\nEntity PoolID: %d\n",e->poolID);
+    } else {
+        printf("\n(NGPL_Entity)%s PoolID: %d\n",e->tag,e->poolID);
+    }
+}
+
+int NGPL_GetEntityPoolID(NGPL_Entity* e)
+{
+    return e->poolID;
+}
+
+void NGPL_SetEntityTag(const char* tag, NGPL_Entity* e)
+{
+    e->tag = tag;
+}
 
 

@@ -23,21 +23,74 @@
 #define NGPLG_PHYSICS_H
 #include "NGPLG.h"
 
-typedef enum Collisions
+
+typedef struct Edge
 {
-    NONE = 0,
-    TOP = 1 << 0,
-    BOTTOM = 1 << 1,
-    LEFT = 1 << 2,
-    RIGHT = 1 << 3,
-}Collisions;
+ Vector2D V1;
+ Vector2D V2;
+}Edge;
 
-void NGPL_UpdateEntityX(NGPL_Entity* e, float deltaTime, float friction);
+typedef struct NGPL_Rect
+{
+    float x;
+    float y;
+    int w;
+    int h;
+    Edge left;
+    Edge top;
+    Edge right;
+    Edge bottom;
+}NGPL_Rect;
 
-void NGPL_UpdateEntityY(NGPL_Entity* e, float deltaTime);
+typedef struct RigidBody
+{
+    const char* tag;
+    bool isDynamic;
+    bool isStatic;
+    float mass;
+    Vector2D position;
+    Vector2D velocity;
+    NGPL_Rect r;
+    int cRow,cCol;
+}RigidBody;
 
-void NGPL_ApplyGravity(NGPL_Entity* e, float g);
+typedef struct PGridCell
+{
+    RigidBody** entities;
+    int entityCount;
+}PGridCell;
 
-void NGPL_Physics(NGPL_EntityPool* pool, float friction, float gravity, float deltaTime);
+typedef enum COLLISION_TYPES
+{
+    L,
+    R,
+    U,
+    D,
+    None
+}COLLISION_TYPES;
+
+typedef struct CollisionInfo
+{
+    bool none;
+    RigidBody* dE;
+    RigidBody* sE;
+    Vector2D point;  // Collision point
+    float massDynamic;
+    float massStatic;
+    Vector2D velocityDynamic;
+    COLLISION_TYPES typeX;
+    COLLISION_TYPES typeY;
+}CollisionInfo;
+
+typedef struct PSpace
+{
+    float g;
+    float f;
+    int cellSize;
+    int rows;
+    int cols;
+    Rect bounds;
+    PGridCell** cells;
+}PSpace;
 
 #endif
