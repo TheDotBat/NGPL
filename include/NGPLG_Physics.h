@@ -93,4 +93,64 @@ typedef struct PSpace
     PGridCell** cells;
 }PSpace;
 
+void NGPL_DrawEdge(Renderer ren, Edge* edge);
+
+NGPL_Rect NGPL_CreateRect(int w, int h, float x, float y);
+
+void NGPL_UpdateRect(NGPL_Rect* r);
+
+void NGPL_BlitRect2(Renderer ren, NGPL_Rect* r);
+
+RigidBody CreateRigidBody(float x, float y, int w , int h);
+
+void NGPL_UpdateRigidBody(RigidBody* rb, float deltaTime);
+
+void NGPL_BlitRigidBody(Renderer ren, RigidBody* rb);
+
+void NGPL_SetRigidBodyMass(RigidBody* rb, float nMass);
+
+void NGPL_SetRigidBodyDynamic(RigidBody* rb, bool isDynamic);
+
+void NGPL_InitPSpace(PSpace* space, int cellSize, int nRows, int nCols);
+
+PSpace NGPL_CreatePhysicsSpace(int cellSize, int nRows, int nCols, int gridX, int gridY);
+
+void NGPL_PGCalcFriction(PSpace* space, RigidBody* rb);
+
+void ApplyForces(PSpace* space, RigidBody* rb);
+
+void NGPL_SetPhysicsSpaceGravity(PSpace* space, float g);
+
+void NGPL_SetPhysicsSpaceFriction(PSpace* space, float f);
+
+void NGPL_GetOccupiedCells(PSpace *space, RigidBody *rb, int *startRow, int *endRow, int *startCol, int *endCol);
+
+void NGPL_PSpaceAddEntity(PSpace *space, RigidBody *rb);
+
+void NGPL_PSpaceRemEntity(PSpace* space, RigidBody* rb);
+
+void NGPL_PSpaceShowGrid(Renderer ren, PSpace* space, NGPL_Color gridColor);
+
+void NGPL_PSpaceFree(PSpace* space);
+
+bool NGPL_NegXAABB(RigidBody* rb1, RigidBody* rb2);
+
+bool NGPL_PosXAABB(RigidBody* rb1, RigidBody* rb2);
+
+bool NGPL_NegYAABB(RigidBody* rb1, RigidBody* rb2);
+
+bool NGPL_PosYAABB(RigidBody* rb1, RigidBody* rb2);
+
+CollisionInfo NGPL_CollisionInfoCheck(RigidBody* dynamicEntity, RigidBody* staticEntity);
+
+RigidBody* GetDynamicEntityFromCollisionInfo(CollisionInfo collision);
+
+RigidBody* GetStaticEntityFromCollisionInfo(CollisionInfo collision);
+
+void NGPL_ResolveCollision(PSpace* space, CollisionInfo collision, float deltaTime);
+
+bool NGPL_PSpaceObserve(PSpace* space, float deltaTime);
+
+void NGPL_PSpaceEntityUpdate(PSpace* space, RigidBody* rb, float deltaTime, int CCD_Step, Renderer ren);
+
 #endif

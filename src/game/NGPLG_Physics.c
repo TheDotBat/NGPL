@@ -166,14 +166,16 @@ void NGPL_SetPhysicsSpaceFriction(PSpace* space, float f)
     space->f = f;
 }
 
-void NGPL_GetOccupiedCells(PSpace *space, RigidBody *rb, int *startRow, int *endRow, int *startCol, int *endCol) {
+void NGPL_GetOccupiedCells(PSpace *space, RigidBody *rb, int *startRow, int *endRow, int *startCol, int *endCol)
+{
     *startRow = (int)rb->position.y / space->cellSize;
     *endRow = (int)(rb->position.y + rb->r.h) / space->cellSize;
     *startCol = (int)rb->position.x / space->cellSize;
     *endCol = (int)(rb->position.x + rb->r.w) / space->cellSize;
 }
 
-void NGPL_PSpaceAddEntity(PSpace *space, RigidBody *rb) {
+void NGPL_PSpaceAddEntity(PSpace *space, RigidBody *rb)
+{
     int startRow, endRow, startCol, endCol;
     NGPL_GetOccupiedCells(space, rb, &startRow, &endRow, &startCol, &endCol);
 
@@ -195,7 +197,8 @@ void NGPL_PSpaceAddEntity(PSpace *space, RigidBody *rb) {
     }
 }
 
-void NGPL_PSpaceRemEntity(PSpace* space, RigidBody* rb) {
+void NGPL_PSpaceRemEntity(PSpace* space, RigidBody* rb)
+{
     int startRow, endRow, startCol, endCol;
     NGPL_GetOccupiedCells(space, rb, &startRow, &endRow, &startCol, &endCol);
 
@@ -218,7 +221,8 @@ void NGPL_PSpaceRemEntity(PSpace* space, RigidBody* rb) {
     }
 }
 
-void NGPL_PSpaceShowGrid(Renderer ren, PSpace* space, NGPL_Color gridColor) {
+void NGPL_PSpaceShowGrid(Renderer ren, PSpace* space, NGPL_Color gridColor)
+{
     // Draw vertical lines
     for (int col = 0; col <= space->cols; ++col) {
         NGPL_Rect verticalLine = NGPL_CreateRect(
@@ -294,7 +298,8 @@ bool NGPL_PosXAABB(RigidBody* rb1, RigidBody* rb2)
     return false;
 }
 
-bool NGPL_NegYAABB(RigidBody* rb1, RigidBody* rb2) {
+bool NGPL_NegYAABB(RigidBody* rb1, RigidBody* rb2)
+{
     if ((int)rb1->r.top.V1.y == (int)rb2->r.bottom.V1.y & (rb1->r.top.V1.x < rb2->r.bottom.V2.x & rb1->r.top.V2.x > rb2->r.bottom.V1.x))
     {
         rb1->position.y = rb2->r.y + rb2->r.h+0.1;
@@ -304,7 +309,8 @@ bool NGPL_NegYAABB(RigidBody* rb1, RigidBody* rb2) {
     return false;
 }
 
-bool NGPL_PosYAABB(RigidBody* rb1, RigidBody* rb2) {
+bool NGPL_PosYAABB(RigidBody* rb1, RigidBody* rb2)
+{
     if ((int)rb1->r.bottom.V1.y == (int)rb2->r.top.V1.y & (rb1->r.bottom.V1.x < rb2->r.top.V2.x & rb1->r.bottom.V2.x > rb2->r.top.V1.x))
     {
         rb1->position.y = rb2->r.y - rb1->r.h-0.1; // Position rb1 to the right of rb2
@@ -377,7 +383,8 @@ RigidBody* GetStaticEntityFromCollisionInfo(CollisionInfo collision)
     return collision.dE;
 }
 
-void NGPL_ResolveCollision(PSpace* space, CollisionInfo collision, float deltaTime) {
+void NGPL_ResolveCollision(PSpace* space, CollisionInfo collision, float deltaTime)
+{
     RigidBody* dynamicEntity = GetDynamicEntityFromCollisionInfo(collision);
     RigidBody* staticEntity = GetStaticEntityFromCollisionInfo(collision);
     
@@ -465,7 +472,8 @@ bool NGPL_PSpaceObserve(PSpace* space, float deltaTime)
     return collisionDetected;
 }
 
-void NGPL_PSpaceEntityUpdate(PSpace* space, RigidBody* rb, float deltaTime, int CCD_Step, Renderer ren) {
+void NGPL_PSpaceEntityUpdate(PSpace* space, RigidBody* rb, float deltaTime, int CCD_Step, Renderer ren)
+{
     int STEPS_FOR_CCD = CCD_Step > 0 ? CCD_Step : 100;
     float stepDelta = deltaTime / STEPS_FOR_CCD;
 
@@ -504,7 +512,4 @@ void NGPL_PSpaceEntityUpdate(PSpace* space, RigidBody* rb, float deltaTime, int 
     rb->cRow = (rb->position.y - space->bounds.y) / space->cellSize;
     rb->cCol = (rb->position.x - space->bounds.x) / space->cellSize;
 
-    // Display the entity's current grid position
-    //NGPL_DisplayEntityGridPosition(ren, rb);
 }
-
