@@ -56,12 +56,14 @@ To verify that NGPL has been successfully added to your PATH:
 4. Try running the `compile-NGPL` script by typing `compile-NGPL` followed by the project files you wish to compile.
 
     - **You Should See This Error Message**:
-  ![NGPL](https://media.discordapp.net/attachments/1132862338521894934/1190716154096910388/image.png?ex=65a2cfd5&is=65905ad5&hm=3c5524b1c07ecd1f4cf8c275fde90eb0288f1da0b6ceadf0a73c4c2dfd063385&=&format=webp&quality=lossless&width=524&height=70)
+
+![NGPL](https://media.discordapp.net/attachments/1132862338521894934/1190716154096910388/image.png?ex=65a2cfd5&is=65905ad5&hm=3c5524b1c07ecd1f4cf8c275fde90eb0288f1da0b6ceadf0a73c4c2dfd063385&=&format=webp&quality=lossless&width=524&height=70)
 
 5. Simply type the command presented in the error message. 
     - For example: ```setx NGPL_DIR "C:\Path\To\NGPL\NGPL_x86"``` and you should be all set.
 6. Now try running compile-NGPL on your project files again...
-    ![NGPL](https://media.discordapp.net/attachments/1132862338521894934/1190716154310832199/image-1.png?ex=65a2cfd5&is=65905ad5&hm=c1994fca37077e90fcc997d74c5d9dd2135258ba3ee004f5dbf3bef090153355&=&format=webp&quality=lossless&width=337&height=108)
+
+![NGPL](https://media.discordapp.net/attachments/1132862338521894934/1190716154310832199/image-1.png?ex=65a2cfd5&is=65905ad5&hm=c1994fca37077e90fcc997d74c5d9dd2135258ba3ee004f5dbf3bef090153355&=&format=webp&quality=lossless&width=337&height=108)
 
 You should now be able to use the `compile-NGPL` script from any location in the Command Prompt on your Windows system.
 
