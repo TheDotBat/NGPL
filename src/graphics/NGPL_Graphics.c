@@ -38,7 +38,6 @@ Window NGPL_CreateWindow(int width, int height, const char* title)
  *
  * returns: A pointer to an SDL2 Renderer struct created with the passed parameters.
 */
-
 Renderer NGPL_CreateRenderer(Window window, int driverIndex, Uint32 flags)
 {
     Renderer r = SDL_CreateRenderer(window, driverIndex, flags);
@@ -74,6 +73,54 @@ void NGPL_BlitCircleF(Renderer renderer, int x, int y, int radius)
     }
 }
 
+void NGPL_DrawEdge(Renderer ren, Edge* edge, NGPL_Color color)
+{
+    SDL_SetRenderDrawColor(ren, color.r, color.g, color.b, color.a);
+    SDL_RenderDrawLineF(ren, edge->V1.x, edge->V1.y, edge->V2.x, edge->V2.y);
+}
+
+NGPL_Rect NGPL_CreateRect(int w, int h, float x, float y)
+{
+    NGPL_Rect r;
+    
+    r.x = x;
+    r.y = y;
+
+    r.w = w;
+    r.h = h;
+
+    Edge left = {{r.x, r.y}, {r.x, r.y+r.h}};
+    Edge top = {{r.x, r.y}, {r.x+r.w, r.y}};
+    Edge right = {{r.x+r.w, r.y}, {r.x+r.w, r.y+r.h}};
+    Edge bottom = {{r.x, r.y+r.h}, {r.x+r.w, r.y+r.h}};
+    
+    r.left = left;
+    r.top = top;
+    r.right = right;
+    r.bottom = bottom;
+
+    return r;
+}
+
+void NGPL_UpdateRect(NGPL_Rect* r)
+{
+    Edge left = {{r->x, r->y}, {r->x, r->y+r->h}};
+    r->left = left;
+    Edge top = {{r->x, r->y}, {r->x+r->w, r->y}};
+    r->top = top;
+    Edge right = {{r->x+r->w, r->y}, {r->x+r->w, r->y+r->h}};
+    r->right = right;
+    Edge bottom = {{r->x, r->y+r->h}, {r->x+r->w, r->y+r->h}};
+    r->bottom = bottom;
+}
+
+void NGPL_BlitRect(Renderer ren, NGPL_Rect* r, NGPL_Color color)
+{
+    NGPL_DrawEdge(ren, &r->left, color);
+    NGPL_DrawEdge(ren, &r->top, color);
+    NGPL_DrawEdge(ren, &r->right, color);
+    NGPL_DrawEdge(ren, &r->bottom, color);
+}
 
 
 

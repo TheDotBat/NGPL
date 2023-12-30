@@ -165,9 +165,11 @@ Uint32 All_SubSystem;
 Uint32 Joystick_SubSystem;
 Uint32 Controller_SubSystem;
 
+typedef SDL_Color NGPL_Color;
+
 // Structs
 /*
- * Struct: Vector2D
+ * Struct: Vector2F
  * ----------------
  * Represents a 2D vector with floating-point coordinates.
  *
@@ -179,10 +181,17 @@ Uint32 Controller_SubSystem;
  *   x: The x-coordinate of the vector.
  *   y: The y-coordinate of the vector.
  */
-typedef struct Vector2D {
+typedef struct Vector2
+{
+    int x;
+    int y;
+}Vector2;
+
+typedef struct Vector2F
+{
     float x;
     float y;
-}Vector2D;
+}Vector2F;
 
 typedef struct Clock
 {
@@ -194,6 +203,178 @@ typedef struct Clock
     float frameCount;
     Uint32 currentTime;
 } Clock;
+
+typedef struct Edge
+{
+ Vector2F V1;
+ Vector2F V2;
+}Edge;
+
+typedef struct NGPL_Rect
+{
+    float x;
+    float y;
+    int w;
+    int h;
+    Edge left;
+    Edge top;
+    Edge right;
+    Edge bottom;
+}NGPL_Rect;
+
+typedef struct NGPL_Sprite
+{
+    NGPL_Texture* image;
+    Rect imgRect;
+    Vector2 size;
+    NGPL_Color color;
+    Vector2 imageOffset;
+}NGPL_Sprite;
+
+typedef struct NGPL_RigidBody
+{
+    const char* tag;
+    bool isDynamic;
+    bool isStatic;
+    float mass;
+    Vector2F position;
+    Vector2F velocity;
+    NGPL_Rect r;
+    int cRow,cCol;
+    bool topDown;
+}NGPL_RigidBody;
+
+typedef struct PGridCell
+{
+    NGPL_RigidBody** entities;
+    int entityCount;
+}PGridCell;
+
+typedef enum COLLISION_TYPES
+{
+    L,
+    R,
+    U,
+    D,
+    None
+}COLLISION_TYPES;
+
+typedef struct CollisionInfo
+{
+    bool none;
+    NGPL_RigidBody* dE;
+    NGPL_RigidBody* sE;
+    Vector2F point;  // Collision point
+    float massDynamic;
+    float massStatic;
+    Vector2F velocityDynamic;
+    COLLISION_TYPES typeX;
+    COLLISION_TYPES typeY;
+}CollisionInfo;
+
+typedef struct PSpace
+{
+    float g;
+    float f;
+    int cellSize;
+    int rows;
+    int cols;
+    Rect bounds;
+    PGridCell** cells;
+}PSpace;
+
+/*
+ * Struct: Entity
+ * --------------
+ * Represents a game object with position, size, velocity, and color.
+ *
+ * This structure defines a basic game object in 2D space, including its position,
+ * size, velocity, and color. Used for representing and manipulating entities in the game.
+ *
+ * Members:
+ *   position: A Vector2F representing the object's position in 2D space.
+ *   size: A Vector2F representing the object's size.
+ *   velocity: A Vector2F representing the object's velocity.
+ *   color: An array of 4 integers representing the RGBA color of the object.
+ */
+typedef struct NGPL_Entity
+{
+    const char* tag;
+    NGPL_RigidBody* rb;
+    Vector2 size;
+    Vector2F position;
+    Vector2F velocity;
+    NGPL_Sprite sprite;
+}NGPL_Entity;
+
+/*
+ * Enum: PlayerActions
+ * --------------------
+ * Represents the various actions a player can perform in the game.
+ *
+ * This enumeration defines a set of bitwise flags corresponding to different player actions.
+ * These can be combined using a bitwise OR to represent multiple actions being performed
+ * simultaneously. This approach allows for efficient checking and updating of player states.
+ *
+ * Members:
+ *   PLAYER_ACTION_NONE: Represents no action being performed (0).
+ *   PLAYER_ACTION_MOVE_LEFT: Represents the action of moving left (0001 in binary).
+ *   PLAYER_ACTION_MOVE_RIGHT: Represents the action of moving right (0010 in binary).
+ *   PLAYER_ACTION_JUMP: Represents the action of jumping (0100 in binary).
+ *   PLAYER_ACTION_MENU: Represents the action of opening the menu (1000 in binary).
+ */
+typedef enum PlayerActions {
+    PLAYER_ACTION_NONE = 0,
+    PLAYER_ACTION_MOVE_LEFT = 1 << 0, // 0001
+    PLAYER_ACTION_MOVE_RIGHT = 1 << 1, // 0010
+    PLAYER_ACTION_JUMP = 1 << 2, // 0100
+    PLAYER_ACTION_MENU = 1 << 3, // 1000
+    PLAYER_ACTION_MOVE_UP = 1 << 4, // 0001 0000
+    PLAYER_ACTION_MOVE_DOWN = 1 << 5, // 0010 0000
+    PLAYER_ACTION_ATTACK = 1 << 6, // 0100 0000
+} PlayerActions;
+
+
+/*
+ * Struct: KeyBinds
+ * ----------------
+ * Holds the SDL scancodes for various key bindings used in the game.
+ *
+ * This structure is used to map SDL scancodes to specific actions within the game,
+ * such as moving left or right, jumping, or opening the menu. These bindings can be
+ * customized and are used by the game to interpret player input.
+ *
+ * Members:
+ *   moveLeft: SDL_Scancode representing the key for moving the player left.
+ *   moveRight: SDL_Scancode representing the key for moving the player right.
+ *   jump: SDL_Scancode representing the key for making the player jump.
+ *   menu: SDL_Scancode representing the key for opening the game menu.
+ */
+typedef struct Keybinds {
+    SDL_Scancode moveUp;
+    SDL_Scancode moveDown;
+    SDL_Scancode moveLeft;
+    SDL_Scancode moveRight;
+    SDL_Scancode jump;
+    SDL_Scancode menu;
+    SDL_Scancode attack; // New control
+} KeyBinds;
+KeyBinds keyBinds;
+
+
+typedef struct NGPL_PoolE
+{
+    NGPL_Entity** entities;
+    int size;
+    int maxSize;
+}NGPL_PoolE;
+
+typedef struct NGPL_Camera
+{
+    Vector2F position;
+    float cameraSpeed;
+    float scrollInterpolation;
+}NGPL_Camera;
 
 // Functions
 /*

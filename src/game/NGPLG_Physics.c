@@ -1,71 +1,30 @@
 #include "../../include/NGPLG_Physics.h"
 
 
-void NGPL_DrawEdge(Renderer ren, Edge* edge)
+NGPL_RigidBody* NGPL_CreateRigidBody(PSpace* space, bool isTopDown, float x, float y, int w, int h)
 {
-    SDL_SetRenderDrawColor(ren, 100,100,255,255);
-    SDL_RenderDrawLineF(ren, edge->V1.x, edge->V1.y, edge->V2.x, edge->V2.y);
+    NGPL_RigidBody* rb = malloc(sizeof(NGPL_RigidBody)); // Dynamically allocate memory for NGPL_RigidBody
+    if (rb == NULL) {
+        // Handle the error in case malloc fails
+        return NULL;
+    }
+
+    rb->mass = 100.0;
+    rb->isStatic = true;
+    rb->isDynamic = false;
+    rb->topDown = isTopDown;
+    // Constrain position within the bounds of the physics space
+    Vector2F spacePos = {space->bounds.x, space->bounds.y};
+    rb->position.x = spacePos.x + x;
+    rb->position.y = spacePos.y + y;
+    rb->velocity.x = 0.0;
+    rb->velocity.y = 0.0;
+    rb->r = NGPL_CreateRect(w, h, spacePos.x + x, spacePos.y + y);
+
+    return rb; // Return a pointer to the newly created NGPL_RigidBody
 }
 
-NGPL_Rect NGPL_CreateRect(int w, int h, float x, float y)
-{
-    NGPL_Rect r;
-    
-    r.x = x;
-    r.y = y;
-
-    r.w = w;
-    r.h = h;
-
-    Edge left = {{r.x, r.y}, {r.x, r.y+r.h}};
-    Edge top = {{r.x, r.y}, {r.x+r.w, r.y}};
-    Edge right = {{r.x+r.w, r.y}, {r.x+r.w, r.y+r.h}};
-    Edge bottom = {{r.x, r.y+r.h}, {r.x+r.w, r.y+r.h}};
-    
-    r.left = left;
-    r.top = top;
-    r.right = right;
-    r.bottom = bottom;
-
-    return r;
-}
-
-void NGPL_UpdateRect(NGPL_Rect* r)
-{
-    Edge left = {{r->x, r->y}, {r->x, r->y+r->h}};
-    r->left = left;
-    Edge top = {{r->x, r->y}, {r->x+r->w, r->y}};
-    r->top = top;
-    Edge right = {{r->x+r->w, r->y}, {r->x+r->w, r->y+r->h}};
-    r->right = right;
-    Edge bottom = {{r->x, r->y+r->h}, {r->x+r->w, r->y+r->h}};
-    r->bottom = bottom;
-}
-
-void NGPL_BlitRect2(Renderer ren, NGPL_Rect* r)
-{
-    NGPL_DrawEdge(ren, &r->left);
-    NGPL_DrawEdge(ren, &r->top);
-    NGPL_DrawEdge(ren, &r->right);
-    NGPL_DrawEdge(ren, &r->bottom);
-}
-
-RigidBody CreateRigidBody(float x, float y, int w , int h)
-{
-    RigidBody rb;
-    rb.mass = 100.0;
-    rb.isDynamic = false;
-    rb.isStatic = true;
-    rb.position.x = x;
-    rb.position.y = y;
-    rb.velocity.x = 0.0;
-    rb.velocity.y = 0.0;
-    rb.r = NGPL_CreateRect(w,h,x,y);
-
-    return rb;
-}
-
-void NGPL_UpdateRigidBody(RigidBody* rb, float deltaTime)
+void NGPL_UpdateRigidBody(NGPL_RigidBody* rb, float deltaTime)
 {
     rb->position.x += rb->velocity.x * deltaTime;
     rb->position.y += rb->velocity.y * deltaTime;
@@ -74,17 +33,17 @@ void NGPL_UpdateRigidBody(RigidBody* rb, float deltaTime)
     NGPL_UpdateRect(&rb->r);
 }
 
-void NGPL_BlitRigidBody(Renderer ren, RigidBody* rb)
+void NGPL_BlitRigidBody(Renderer ren, NGPL_RigidBody* rb, NGPL_Color color)
 {
-    NGPL_BlitRect2(ren, &rb->r);
+    NGPL_BlitRect(ren, &rb->r, color);
 }
 
-void NGPL_SetRigidBodyMass(RigidBody* rb, float nMass)
+void NGPL_SetRigidBodyMass(NGPL_RigidBody* rb, float nMass)
 {
     rb->mass = nMass;
 }
 
-void NGPL_SetRigidBodyDynamic(RigidBody* rb, bool isDynamic)
+void NGPL_SetRigidBodyDynamic(NGPL_RigidBody* rb, bool isDynamic)
 {
     if (isDynamic)
     {
@@ -131,7 +90,7 @@ PSpace NGPL_CreatePhysicsSpace(int cellSize, int nRows, int nCols, int gridX, in
     return space;
 }
 
-void NGPL_PGCalcFriction(PSpace* space, RigidBody* rb)
+void NGPL_PGCalcFrictionX(PSpace* space, NGPL_RigidBody* rb)
 {
     if (rb->velocity.x > 0)
     {
@@ -149,11 +108,27 @@ void NGPL_PGCalcFriction(PSpace* space, RigidBody* rb)
     }
 }
 
-void ApplyForces(PSpace* space, RigidBody* rb)
+void NGPL_PGCalcFrictionY(PSpace* space, NGPL_RigidBody* rb)
+{
+    if (rb->velocity.y > 0) {
+        rb->velocity.y -= space->f;
+        if (rb->velocity.y < 0) {
+            rb->velocity.y = 0;
+        }
+    } else if (rb->velocity.y < 0) {
+        rb->velocity.y += space->f;
+        if (rb->velocity.y > 0) {
+            rb->velocity.y = 0;
+        }
+    }
+}
+
+void NGPL_ApplyForces(PSpace* space, NGPL_RigidBody* rb)
 {
     float gf = (space->g*rb->mass/20.0)*((rb->mass*10)/(rb->mass*10));
     rb->isDynamic ? rb->velocity.y += gf : 0;
-    rb->isDynamic ? NGPL_PGCalcFriction(space, rb) : NULL;
+    rb->isDynamic ? NGPL_PGCalcFrictionX(space, rb) : NULL;
+    rb->topDown ? NGPL_PGCalcFrictionY(space, rb) : NULL;
 }
 
 void NGPL_SetPhysicsSpaceGravity(PSpace* space, float g)
@@ -166,7 +141,7 @@ void NGPL_SetPhysicsSpaceFriction(PSpace* space, float f)
     space->f = f;
 }
 
-void NGPL_GetOccupiedCells(PSpace *space, RigidBody *rb, int *startRow, int *endRow, int *startCol, int *endCol)
+void NGPL_GetOccupiedCells(PSpace *space, NGPL_RigidBody *rb, int *startRow, int *endRow, int *startCol, int *endCol)
 {
     *startRow = (int)rb->position.y / space->cellSize;
     *endRow = (int)(rb->position.y + rb->r.h) / space->cellSize;
@@ -174,7 +149,7 @@ void NGPL_GetOccupiedCells(PSpace *space, RigidBody *rb, int *startRow, int *end
     *endCol = (int)(rb->position.x + rb->r.w) / space->cellSize;
 }
 
-void NGPL_PSpaceAddEntity(PSpace *space, RigidBody *rb)
+void NGPL_PSpaceAddEntity(PSpace *space, NGPL_RigidBody *rb)
 {
     int startRow, endRow, startCol, endCol;
     NGPL_GetOccupiedCells(space, rb, &startRow, &endRow, &startCol, &endCol);
@@ -185,7 +160,7 @@ void NGPL_PSpaceAddEntity(PSpace *space, RigidBody *rb)
 
             PGridCell *cell = &space->cells[row][col];
             // Resize the entities array to accommodate the new entity
-            cell->entities = realloc(cell->entities, (cell->entityCount + 1) * sizeof(RigidBody*));
+            cell->entities = realloc(cell->entities, (cell->entityCount + 1) * sizeof(NGPL_RigidBody*));
             if (cell->entities == NULL) {
                 // Handle allocation failure
                 return;
@@ -197,7 +172,7 @@ void NGPL_PSpaceAddEntity(PSpace *space, RigidBody *rb)
     }
 }
 
-void NGPL_PSpaceRemEntity(PSpace* space, RigidBody* rb)
+void NGPL_PSpaceRemEntity(PSpace* space, NGPL_RigidBody* rb)
 {
     int startRow, endRow, startCol, endCol;
     NGPL_GetOccupiedCells(space, rb, &startRow, &endRow, &startCol, &endCol);
@@ -231,7 +206,7 @@ void NGPL_PSpaceShowGrid(Renderer ren, PSpace* space, NGPL_Color gridColor)
             space->bounds.x + col * space->cellSize,
             space->bounds.y
         );
-        NGPL_BlitRect2(ren, &verticalLine);
+        NGPL_BlitRect(ren, &verticalLine, gridColor);
     }
 
     // Draw horizontal lines
@@ -242,7 +217,7 @@ void NGPL_PSpaceShowGrid(Renderer ren, PSpace* space, NGPL_Color gridColor)
             space->bounds.x,
             space->bounds.y + row * space->cellSize
         );
-        NGPL_BlitRect2(ren, &horizontalLine);
+        NGPL_BlitRect(ren, &horizontalLine, gridColor);
     }
 }
 
@@ -275,7 +250,7 @@ void NGPL_PSpaceFree(PSpace* space)
     free(space->cells);
 }
 
-bool NGPL_NegXAABB(RigidBody* rb1, RigidBody* rb2)
+bool NGPL_NegXAABB(NGPL_RigidBody* rb1, NGPL_RigidBody* rb2)
 {
 
     if ((int)rb1->r.left.V1.x == (int)rb2->r.right.V1.x & (rb1->r.left.V1.y <= rb2->r.right.V2.y & rb1->r.left.V2.y >= rb2->r.right.V1.y))
@@ -287,7 +262,7 @@ bool NGPL_NegXAABB(RigidBody* rb1, RigidBody* rb2)
     return false;
 }
 
-bool NGPL_PosXAABB(RigidBody* rb1, RigidBody* rb2)
+bool NGPL_PosXAABB(NGPL_RigidBody* rb1, NGPL_RigidBody* rb2)
 {
     if ((int)rb1->r.right.V1.x == (int)rb2->r.left.V1.x & (rb1->r.right.V1.y <= rb2->r.left.V2.y & rb1->r.right.V2.y >= rb2->r.left.V1.y))
     {
@@ -298,7 +273,7 @@ bool NGPL_PosXAABB(RigidBody* rb1, RigidBody* rb2)
     return false;
 }
 
-bool NGPL_NegYAABB(RigidBody* rb1, RigidBody* rb2)
+bool NGPL_NegYAABB(NGPL_RigidBody* rb1, NGPL_RigidBody* rb2)
 {
     if ((int)rb1->r.top.V1.y == (int)rb2->r.bottom.V1.y & (rb1->r.top.V1.x < rb2->r.bottom.V2.x & rb1->r.top.V2.x > rb2->r.bottom.V1.x))
     {
@@ -309,7 +284,7 @@ bool NGPL_NegYAABB(RigidBody* rb1, RigidBody* rb2)
     return false;
 }
 
-bool NGPL_PosYAABB(RigidBody* rb1, RigidBody* rb2)
+bool NGPL_PosYAABB(NGPL_RigidBody* rb1, NGPL_RigidBody* rb2)
 {
     if ((int)rb1->r.bottom.V1.y == (int)rb2->r.top.V1.y & (rb1->r.bottom.V1.x < rb2->r.top.V2.x & rb1->r.bottom.V2.x > rb2->r.top.V1.x))
     {
@@ -320,7 +295,7 @@ bool NGPL_PosYAABB(RigidBody* rb1, RigidBody* rb2)
     return false;
 }
 
-CollisionInfo NGPL_CollisionInfoCheck(RigidBody* dynamicEntity, RigidBody* staticEntity)
+CollisionInfo NGPL_CollisionInfoCheck(NGPL_RigidBody* dynamicEntity, NGPL_RigidBody* staticEntity)
 {
     CollisionInfo info;
     info.none = true; // No collision detected yet
@@ -371,13 +346,13 @@ CollisionInfo NGPL_CollisionInfoCheck(RigidBody* dynamicEntity, RigidBody* stati
     return info;
 }
 
-RigidBody* GetDynamicEntityFromCollisionInfo(CollisionInfo collision)
+NGPL_RigidBody* NGPL_GetDynamicEntityFromCollisionInfo(CollisionInfo collision)
 {
     // Get the entity from the PGridSpace 
     return collision.dE;
 }
 
-RigidBody* GetStaticEntityFromCollisionInfo(CollisionInfo collision)
+NGPL_RigidBody* NGPL_GetStaticEntityFromCollisionInfo(CollisionInfo collision)
 {
     // Get the entity from the PGridSpace 
     return collision.dE;
@@ -385,8 +360,8 @@ RigidBody* GetStaticEntityFromCollisionInfo(CollisionInfo collision)
 
 void NGPL_ResolveCollision(PSpace* space, CollisionInfo collision, float deltaTime)
 {
-    RigidBody* dynamicEntity = GetDynamicEntityFromCollisionInfo(collision);
-    RigidBody* staticEntity = GetStaticEntityFromCollisionInfo(collision);
+    NGPL_RigidBody* dynamicEntity = NGPL_GetDynamicEntityFromCollisionInfo(collision);
+    NGPL_RigidBody* staticEntity = NGPL_GetStaticEntityFromCollisionInfo(collision);
     
     // Collision resolution ( bouncing off, rotating, etc.)
     if (collision.typeX == R & collision.typeY == D) // Right and Down
@@ -443,7 +418,7 @@ bool NGPL_PSpaceObserve(PSpace* space, float deltaTime)
             PGridCell *cell = &space->cells[row][col];
             for (int i = 0; i < cell->entityCount; i++)
             {
-                RigidBody *entityA = cell->entities[i];
+                NGPL_RigidBody *entityA = cell->entities[i];
                 // Check only if entityA is dynamic
                 if (entityA->isDynamic)
                 {
@@ -452,7 +427,7 @@ bool NGPL_PSpaceObserve(PSpace* space, float deltaTime)
                     {
                         if (i == j) continue; // Skip checking against itself
 
-                        RigidBody *entityB = cell->entities[j];
+                        NGPL_RigidBody *entityB = cell->entities[j];
 
                         // Check only if entityB is static
                         if (entityB->isStatic)
@@ -472,7 +447,7 @@ bool NGPL_PSpaceObserve(PSpace* space, float deltaTime)
     return collisionDetected;
 }
 
-void NGPL_PSpaceEntityUpdate(PSpace* space, RigidBody* rb, float deltaTime, int CCD_Step, Renderer ren)
+void NGPL_PSpaceUpdateBodies(PSpace* space, NGPL_RigidBody* rb, float deltaTime, int CCD_Step)
 {
     int STEPS_FOR_CCD = CCD_Step > 0 ? CCD_Step : 100;
     float stepDelta = deltaTime / STEPS_FOR_CCD;
@@ -482,8 +457,8 @@ void NGPL_PSpaceEntityUpdate(PSpace* space, RigidBody* rb, float deltaTime, int 
         NGPL_UpdateRigidBody(rb, stepDelta);
 
         // Constrain position within the bounds of the physics space
-        rb->position.x = max(space->bounds.x, min(rb->position.x, space->bounds.x + space->bounds.w - rb->r.w));
-        rb->position.y = max(space->bounds.y, min(rb->position.y, space->bounds.y + space->bounds.h - rb->r.h));
+        rb->position.x = fmax(space->bounds.x, fmin(rb->position.x, space->bounds.x + space->bounds.w - rb->r.w));
+        rb->position.y = fmax(space->bounds.y, fmin(rb->position.y, space->bounds.y + space->bounds.h - rb->r.h));
         NGPL_UpdateRect(&rb->r);  // Update the collider/rectangle after adjusting the position
 
         // Calculate and update the current row and column
@@ -513,3 +488,22 @@ void NGPL_PSpaceEntityUpdate(PSpace* space, RigidBody* rb, float deltaTime, int 
     rb->cCol = (rb->position.x - space->bounds.x) / space->cellSize;
 
 }
+
+void NGPL_CreateEntityRigidBody(PSpace* space, bool isTopDown, NGPL_Entity* e, float mass, Vector2F position, Vector2 size)
+{
+    e->rb = NGPL_CreateRigidBody(space, isTopDown, position.x, position.y, size.x,size.y);
+    NGPL_PSpaceAddEntity(space, e->rb);
+    NGPL_SetRigidBodyMass(e->rb, mass);
+}
+
+void NGPL_EntityUpdate(NGPL_Entity* e)
+{
+    e->velocity.x = e->rb->velocity.x;
+    e->velocity.y = e->rb->velocity.y;
+    e->position.x = e->rb->position.x;
+    e->position.y = e->rb->position.y;
+    e->sprite.imgRect.x = e->position.x - e->sprite.imageOffset.x;
+    e->sprite.imgRect.y = e->position.y - e->sprite.imageOffset.y;
+}
+
+

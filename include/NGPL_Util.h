@@ -24,10 +24,6 @@
 #include "NGPL.h"
 
 
-// Structs
-
-
-// Functions
 /*
  * Function: NGPL_CreateClock
  * -----------------------------------------
@@ -142,5 +138,29 @@ float NGPL_GetDeltaTime(Clock* clock);
 void NGPL_CapFPS(Clock* clock);
 
 int NGPL_IsMouseHover(int mouseX, int mouseY, int pointX, int pointY, int size);
+
+NGPL_PoolE* NGPL_CreatePool(int maxSize);
+
+void NGPL_AddToPool(NGPL_Entity* e, NGPL_PoolE* pool);
+
+char* NGPL_ReadFileToString(const char* filename);
+
+Vector2F NGPL_GetMouseVectorF();
+
+bool NGPL_IsMouseOverSprite(NGPL_Entity* entity);
+
+bool NGPL_IsMouseOverRigidBody(NGPL_RigidBody* rb);
+
+bool NGPL_IsMouseAtPoint(int x, int y);
+
+Vector2 NGPL_GetWindowSize(SDL_Window* window);
+
+NGPL_Camera* NGPL_CreateCamera(Vector2F position, float panSpeed, float interpolation);
+
+void NGPL_CenterCameraOnEntity(Window win, NGPL_Camera* cam, NGPL_Entity* entity, float deltaTime);
+
+void NGPL_BoxCamera(NGPL_Camera* cam, NGPL_Entity* entity, SDL_Rect box, float deltaTime);
+
+void NGPL_PanCamera(NGPL_Camera* cam, Vector2F targetPosition, float interpolation, float deltaTime);
 
 #endif
