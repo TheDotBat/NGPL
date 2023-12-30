@@ -119,7 +119,7 @@ void NGPL_CreateSprite(NGPL_Entity* e, Vector2 size, NGPL_Color color);
  * Returns:
  *   Entity: The newly created and initialized game object.
  */
-NGPL_Entity NGPL_CreateEntity(PSpace* space, Vector2F position, Vector2 size, NGPL_Color color);
+NGPL_Entity NGPL_CreateEntity(NGPL_PSpace* space, Vector2F position, Vector2 size, NGPL_Color color);
 
 /*
  * Function: NGPL_CreateTexture
@@ -146,6 +146,8 @@ void NGPL_SetEntityImageOffsetX(NGPL_Entity* e, int offsetX);
 void NGPL_SetEntityImageOffsetY(NGPL_Entity* e, int offsetY);
 
 void NGPL_LoadSetEntityImage(Renderer ren, NGPL_Entity* e, const char* fp);
+
+void NGPL_LayoutMapData(NGPL_PSpace* space, NGPL_PoolE* pool, Renderer ren, const char* mapDataPath, Vector2 tileSize);
 
 #include "NGPLG_Physics.h"
 #endif

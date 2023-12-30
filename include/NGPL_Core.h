@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 //#include "SDL.h"
+#include "cJSON.h"
 #include "SDL_image.h"
 #undef main
 
@@ -272,7 +273,7 @@ typedef struct CollisionInfo
     COLLISION_TYPES typeY;
 }CollisionInfo;
 
-typedef struct PSpace
+typedef struct NGPL_PSpace
 {
     float g;
     float f;
@@ -281,7 +282,7 @@ typedef struct PSpace
     int cols;
     Rect bounds;
     PGridCell** cells;
-}PSpace;
+}NGPL_PSpace;
 
 /*
  * Struct: Entity
@@ -375,6 +376,16 @@ typedef struct NGPL_Camera
     float cameraSpeed;
     float scrollInterpolation;
 }NGPL_Camera;
+
+typedef struct NGPL_PoolR
+{
+    bool clearScreen;
+    bool showSpaceGrid;
+    bool showSpaceBodies;
+    NGPL_Color gridColor;
+    NGPL_Color clearColor;
+    NGPL_PoolE* entityPool;
+}NGPL_PoolR;
 
 // Functions
 /*

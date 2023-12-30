@@ -97,5 +97,20 @@ void NGPL_UpdateRect(NGPL_Rect* r);
 
 void NGPL_BlitRect(Renderer ren, NGPL_Rect* r, NGPL_Color color);
 
+void NGPL_PSpaceShowGrid(Renderer ren, NGPL_PSpace* space, NGPL_Color gridColor);
+
+void NGPL_EntityUpdate(NGPL_Entity* e);
+
+void NGPL_BlitRigidBody(Renderer ren, NGPL_RigidBody* rb, NGPL_Color color);
+
+void NGPL_RenderEntitySpriteRect(Renderer ren, NGPL_Entity* e);
+
+void NGPL_BlitPSpace(NGPL_PSpace* space, Renderer ren);
+
+void NGPL_RenderPoolE(Renderer ren, NGPL_PoolE* pool, NGPL_Camera* cam);
+
+void NGPL_RenderSpace(Renderer ren, NGPL_PSpace* space, NGPL_Camera* cam, NGPL_PoolR* poolR);
+
+void NGPL_ToggleBorderless(Window window);
 
 #endif

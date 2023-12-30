@@ -26,39 +26,35 @@
 
 
 
-NGPL_RigidBody* NGPL_CreateRigidBody(PSpace* space, bool isTopDown, float x, float y, int w, int h);
+NGPL_RigidBody* NGPL_CreateRigidBody(NGPL_PSpace* space, bool isTopDown, float x, float y, int w, int h);
 
 void NGPL_UpdateRigidBody(NGPL_RigidBody* rb, float deltaTime);
-
-void NGPL_BlitRigidBody(Renderer ren, NGPL_RigidBody* rb, NGPL_Color color);
 
 void NGPL_SetRigidBodyMass(NGPL_RigidBody* rb, float nMass);
 
 void NGPL_SetRigidBodyDynamic(NGPL_RigidBody* rb, bool isDynamic);
 
-void NGPL_InitPSpace(PSpace* space, int cellSize, int nRows, int nCols);
+void NGPL_InitPSpace(NGPL_PSpace* space, int cellSize, int nRows, int nCols);
 
-PSpace NGPL_CreatePhysicsSpace(int cellSize, int nRows, int nCols, int gridX, int gridY);
+NGPL_PSpace NGPL_CreatePhysicsSpace(int cellSize, int nRows, int nCols, int gridX, int gridY);
 
-void NGPL_PGCalcFrictionX(PSpace* space, NGPL_RigidBody* rb);
+void NGPL_PGCalcFrictionX(NGPL_PSpace* space, NGPL_RigidBody* rb);
 
-void NGPL_PGCalcFrictionY(PSpace* space, NGPL_RigidBody* rb);
+void NGPL_PGCalcFrictionY(NGPL_PSpace* space, NGPL_RigidBody* rb);
 
-void NGPL_ApplyForces(PSpace* space, NGPL_RigidBody* rb);
+void NGPL_ApplyForces(NGPL_PSpace* space, NGPL_RigidBody* rb);
 
-void NGPL_SetPhysicsSpaceGravity(PSpace* space, float g);
+void NGPL_SetPhysicsSpaceGravity(NGPL_PSpace* space, float g);
 
-void NGPL_SetPhysicsSpaceFriction(PSpace* space, float f);
+void NGPL_SetPhysicsSpaceFriction(NGPL_PSpace* space, float f);
 
-void NGPL_GetOccupiedCells(PSpace *space, NGPL_RigidBody *rb, int *startRow, int *endRow, int *startCol, int *endCol);
+void NGPL_GetOccupiedCells(NGPL_PSpace *space, NGPL_RigidBody *rb, int *startRow, int *endRow, int *startCol, int *endCol);
 
-void NGPL_PSpaceAddEntity(PSpace *space, NGPL_RigidBody *rb);
+void NGPL_PSpaceAddEntity(NGPL_PSpace *space, NGPL_RigidBody *rb);
 
-void NGPL_PSpaceRemEntity(PSpace* space, NGPL_RigidBody* rb);
+void NGPL_PSpaceRemEntity(NGPL_PSpace* space, NGPL_RigidBody* rb);
 
-void NGPL_PSpaceShowGrid(Renderer ren, PSpace* space, NGPL_Color gridColor);
-
-void NGPL_PSpaceFree(PSpace* space);
+void NGPL_PSpaceFree(NGPL_PSpace* space);
 
 bool NGPL_NegXAABB(NGPL_RigidBody* rb1, NGPL_RigidBody* rb2);
 
@@ -74,14 +70,14 @@ NGPL_RigidBody* NGPL_GetDynamicEntityFromCollisionInfo(CollisionInfo collision);
 
 NGPL_RigidBody* NGPL_GetStaticEntityFromCollisionInfo(CollisionInfo collision);
 
-void NGPL_ResolveCollision(PSpace* space, CollisionInfo collision, float deltaTime);
+void NGPL_ResolveCollision(NGPL_PSpace* space, CollisionInfo collision, float deltaTime);
 
-bool NGPL_PSpaceObserve(PSpace* space, float deltaTime);
+bool NGPL_PSpaceObserve(NGPL_PSpace* space, float deltaTime);
 
-void NGPL_PSpaceUpdateBodies(PSpace* space, NGPL_RigidBody* rb, float deltaTime, int CCD_Step);
+void NGPL_PSpaceUpdateBodies(NGPL_PSpace* space, NGPL_RigidBody* rb, float deltaTime, int CCD_Step);
 
-void NGPL_CreateEntityRigidBody(PSpace* space, bool isTopDown, NGPL_Entity* e, float mass, Vector2F position, Vector2 size);
+void NGPL_CreateEntityRigidBody(NGPL_PSpace* space, bool isTopDown, NGPL_Entity* e, float mass, Vector2F position, Vector2 size);
 
-void NGPL_EntityUpdate(NGPL_Entity* e);
+void NGPL_PSpaceUpdate(NGPL_PSpace* space, float deltaTime, int CCD_Step);
 
 #endif

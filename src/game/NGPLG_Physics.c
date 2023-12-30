@@ -1,7 +1,7 @@
 #include "../../include/NGPLG_Physics.h"
 
 
-NGPL_RigidBody* NGPL_CreateRigidBody(PSpace* space, bool isTopDown, float x, float y, int w, int h)
+NGPL_RigidBody* NGPL_CreateRigidBody(NGPL_PSpace* space, bool isTopDown, float x, float y, int w, int h)
 {
     NGPL_RigidBody* rb = malloc(sizeof(NGPL_RigidBody)); // Dynamically allocate memory for NGPL_RigidBody
     if (rb == NULL) {
@@ -55,7 +55,7 @@ void NGPL_SetRigidBodyDynamic(NGPL_RigidBody* rb, bool isDynamic)
     }
 }
 
-void NGPL_InitPSpace(PSpace* space, int cellSize, int nRows, int nCols)
+void NGPL_InitPSpace(NGPL_PSpace* space, int cellSize, int nRows, int nCols)
 {
     space->cellSize = cellSize;
     space->rows = nRows;
@@ -77,9 +77,9 @@ void NGPL_InitPSpace(PSpace* space, int cellSize, int nRows, int nCols)
     }
 }
 
-PSpace NGPL_CreatePhysicsSpace(int cellSize, int nRows, int nCols, int gridX, int gridY)
+NGPL_PSpace NGPL_CreatePhysicsSpace(int cellSize, int nRows, int nCols, int gridX, int gridY)
 {
-    PSpace space;
+    NGPL_PSpace space;
 
     space.bounds.x = gridX;
     space.bounds.y = gridY;
@@ -90,7 +90,7 @@ PSpace NGPL_CreatePhysicsSpace(int cellSize, int nRows, int nCols, int gridX, in
     return space;
 }
 
-void NGPL_PGCalcFrictionX(PSpace* space, NGPL_RigidBody* rb)
+void NGPL_PGCalcFrictionX(NGPL_PSpace* space, NGPL_RigidBody* rb)
 {
     if (rb->velocity.x > 0)
     {
@@ -108,7 +108,7 @@ void NGPL_PGCalcFrictionX(PSpace* space, NGPL_RigidBody* rb)
     }
 }
 
-void NGPL_PGCalcFrictionY(PSpace* space, NGPL_RigidBody* rb)
+void NGPL_PGCalcFrictionY(NGPL_PSpace* space, NGPL_RigidBody* rb)
 {
     if (rb->velocity.y > 0) {
         rb->velocity.y -= space->f;
@@ -123,25 +123,25 @@ void NGPL_PGCalcFrictionY(PSpace* space, NGPL_RigidBody* rb)
     }
 }
 
-void NGPL_ApplyForces(PSpace* space, NGPL_RigidBody* rb)
+void NGPL_ApplyForces(NGPL_PSpace* space, NGPL_RigidBody* rb)
 {
     float gf = (space->g*rb->mass/20.0)*((rb->mass*10)/(rb->mass*10));
     rb->isDynamic ? rb->velocity.y += gf : 0;
     rb->isDynamic ? NGPL_PGCalcFrictionX(space, rb) : NULL;
-    rb->topDown ? NGPL_PGCalcFrictionY(space, rb) : NULL;
+    rb->topDown & rb->isDynamic ? NGPL_PGCalcFrictionY(space, rb) : NULL;
 }
 
-void NGPL_SetPhysicsSpaceGravity(PSpace* space, float g)
+void NGPL_SetPhysicsSpaceGravity(NGPL_PSpace* space, float g)
 {
     space->g = g;
 }
 
-void NGPL_SetPhysicsSpaceFriction(PSpace* space, float f)
+void NGPL_SetPhysicsSpaceFriction(NGPL_PSpace* space, float f)
 {
     space->f = f;
 }
 
-void NGPL_GetOccupiedCells(PSpace *space, NGPL_RigidBody *rb, int *startRow, int *endRow, int *startCol, int *endCol)
+void NGPL_GetOccupiedCells(NGPL_PSpace *space, NGPL_RigidBody *rb, int *startRow, int *endRow, int *startCol, int *endCol)
 {
     *startRow = (int)rb->position.y / space->cellSize;
     *endRow = (int)(rb->position.y + rb->r.h) / space->cellSize;
@@ -149,7 +149,7 @@ void NGPL_GetOccupiedCells(PSpace *space, NGPL_RigidBody *rb, int *startRow, int
     *endCol = (int)(rb->position.x + rb->r.w) / space->cellSize;
 }
 
-void NGPL_PSpaceAddEntity(PSpace *space, NGPL_RigidBody *rb)
+void NGPL_PSpaceAddEntity(NGPL_PSpace *space, NGPL_RigidBody *rb)
 {
     int startRow, endRow, startCol, endCol;
     NGPL_GetOccupiedCells(space, rb, &startRow, &endRow, &startCol, &endCol);
@@ -172,7 +172,7 @@ void NGPL_PSpaceAddEntity(PSpace *space, NGPL_RigidBody *rb)
     }
 }
 
-void NGPL_PSpaceRemEntity(PSpace* space, NGPL_RigidBody* rb)
+void NGPL_PSpaceRemEntity(NGPL_PSpace* space, NGPL_RigidBody* rb)
 {
     int startRow, endRow, startCol, endCol;
     NGPL_GetOccupiedCells(space, rb, &startRow, &endRow, &startCol, &endCol);
@@ -196,7 +196,7 @@ void NGPL_PSpaceRemEntity(PSpace* space, NGPL_RigidBody* rb)
     }
 }
 
-void NGPL_PSpaceShowGrid(Renderer ren, PSpace* space, NGPL_Color gridColor)
+void NGPL_PSpaceShowGrid(Renderer ren, NGPL_PSpace* space, NGPL_Color gridColor)
 {
     // Draw vertical lines
     for (int col = 0; col <= space->cols; ++col) {
@@ -221,7 +221,7 @@ void NGPL_PSpaceShowGrid(Renderer ren, PSpace* space, NGPL_Color gridColor)
     }
 }
 
-void NGPL_PSpaceFree(PSpace* space)
+void NGPL_PSpaceFree(NGPL_PSpace* space)
 {
     if (space == NULL) return;
 
@@ -358,7 +358,7 @@ NGPL_RigidBody* NGPL_GetStaticEntityFromCollisionInfo(CollisionInfo collision)
     return collision.dE;
 }
 
-void NGPL_ResolveCollision(PSpace* space, CollisionInfo collision, float deltaTime)
+void NGPL_ResolveCollision(NGPL_PSpace* space, CollisionInfo collision, float deltaTime)
 {
     NGPL_RigidBody* dynamicEntity = NGPL_GetDynamicEntityFromCollisionInfo(collision);
     NGPL_RigidBody* staticEntity = NGPL_GetStaticEntityFromCollisionInfo(collision);
@@ -408,7 +408,7 @@ void NGPL_ResolveCollision(PSpace* space, CollisionInfo collision, float deltaTi
     //printf("RESOLVING | Collision detected @: %0.1f | %0.1f\n", collision.point.x, collision.point.y);
 }
 
-bool NGPL_PSpaceObserve(PSpace* space, float deltaTime)
+bool NGPL_PSpaceObserve(NGPL_PSpace* space, float deltaTime)
 {
     bool collisionDetected = false;
     for (int row = 0; row < space->rows; row++)
@@ -447,7 +447,7 @@ bool NGPL_PSpaceObserve(PSpace* space, float deltaTime)
     return collisionDetected;
 }
 
-void NGPL_PSpaceUpdateBodies(PSpace* space, NGPL_RigidBody* rb, float deltaTime, int CCD_Step)
+void NGPL_PSpaceUpdateBodies(NGPL_PSpace* space, NGPL_RigidBody* rb, float deltaTime, int CCD_Step)
 {
     int STEPS_FOR_CCD = CCD_Step > 0 ? CCD_Step : 100;
     float stepDelta = deltaTime / STEPS_FOR_CCD;
@@ -489,7 +489,7 @@ void NGPL_PSpaceUpdateBodies(PSpace* space, NGPL_RigidBody* rb, float deltaTime,
 
 }
 
-void NGPL_CreateEntityRigidBody(PSpace* space, bool isTopDown, NGPL_Entity* e, float mass, Vector2F position, Vector2 size)
+void NGPL_CreateEntityRigidBody(NGPL_PSpace* space, bool isTopDown, NGPL_Entity* e, float mass, Vector2F position, Vector2 size)
 {
     e->rb = NGPL_CreateRigidBody(space, isTopDown, position.x, position.y, size.x,size.y);
     NGPL_PSpaceAddEntity(space, e->rb);
@@ -506,4 +506,18 @@ void NGPL_EntityUpdate(NGPL_Entity* e)
     e->sprite.imgRect.y = e->position.y - e->sprite.imageOffset.y;
 }
 
+void NGPL_PSpaceUpdate(NGPL_PSpace* space, float deltaTime, int CCD_Step)
+{
+    for (int i = 0; i < space->rows; i++)
+    {
+        for (int j = 0; j < space->cols; j++)
+        {
+            for (int body = 0; body < space->cells[i][j].entityCount; body++)
+            {
+                NGPL_ApplyForces(space, space->cells[i][j].entities[body]);
+                NGPL_PSpaceUpdateBodies(space, space->cells[i][j].entities[body], deltaTime, CCD_Step);
+            }
+        }
+    }
+}
 

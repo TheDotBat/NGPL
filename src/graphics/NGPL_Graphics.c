@@ -14,7 +14,7 @@
  */
 Window NGPL_CreateWindow(int width, int height, const char* title)
 {
-    Window window = SDL_CreateWindow(title,SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,SDL_WINDOW_SHOWN);
+    Window window = SDL_CreateWindow(title,SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width,height,SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE);
 
     if (!window)
     {
@@ -122,5 +122,74 @@ void NGPL_BlitRect(Renderer ren, NGPL_Rect* r, NGPL_Color color)
     NGPL_DrawEdge(ren, &r->bottom, color);
 }
 
+void NGPL_RenderEntitySpriteRect(Renderer ren, NGPL_Entity* e)
+{
+    if (e->rb == NULL)
+    {
+        SDL_RenderFillRect(ren, &e->sprite.imgRect);
+    } else {
+        SDL_RenderFillRect(ren, &e->sprite.imgRect);    // imgRect needs to be updated to match rb->r when present
+        NGPL_BlitRect(ren, &e->rb->r, e->sprite.color);
+    }
+}
 
+void NGPL_BlitPSpace(NGPL_PSpace* space, Renderer ren)
+{
+    for (int i = 0; i < space->rows; i++)
+    {
+        for (int j = 0; j < space->cols; j++)
+        {
+            for ( int rbs = 0; rbs < space->cells[i][j].entityCount; rbs++)
+            {
+                NGPL_BlitRigidBody(ren, space->cells[i][j].entities[rbs], (NGPL_Color){255,0,0,255});
+            }
+        }
+    }
 
+}
+
+void NGPL_RenderPoolE(Renderer ren, NGPL_PoolE* pool, NGPL_Camera* cam)
+{
+    for (int entity = 0; entity < pool->size; entity++)
+    {
+        Rect renderRect;
+        renderRect.x = (int)pool->entities[entity]->sprite.imgRect.x - cam->position.x;
+        renderRect.y = (int)pool->entities[entity]->sprite.imgRect.y - cam->position.y;
+        renderRect.w = (int)pool->entities[entity]->sprite.imgRect.w;
+        renderRect.h = (int)pool->entities[entity]->sprite.imgRect.h;
+        SDL_RenderCopy(ren, pool->entities[entity]->sprite.image, NULL, &renderRect);
+    }
+}
+
+void NGPL_RenderSpace(Renderer ren, NGPL_PSpace* space, NGPL_Camera* cam, NGPL_PoolR* poolR)
+{
+    if (poolR->clearScreen)
+    {
+        int color[4] = {poolR->clearColor.r, poolR->clearColor.g, poolR->clearColor.b, poolR->clearColor.a};
+        NGPL_ClearScreen(ren, color);
+    }
+    if (poolR->showSpaceGrid)
+    {
+        NGPL_PSpaceShowGrid(ren, space, poolR->gridColor);
+    }
+    if (poolR->entityPool != NULL)
+    {
+        NGPL_RenderPoolE(ren, poolR->entityPool, cam);
+    }
+    if (poolR->showSpaceBodies)
+    {
+        NGPL_BlitPSpace(space, ren);
+    }
+}
+
+void NGPL_ToggleBorderless(Window window)
+{
+    Uint32 flags = SDL_GetWindowFlags(window);
+    if (flags & SDL_WINDOW_FULLSCREEN_DESKTOP) {
+        SDL_SetWindowFullscreen(window, 0); // Turn off borderless fullscreen
+        SDL_SetWindowBordered(window, SDL_TRUE); // Add window border
+    } else {
+        SDL_SetWindowBordered(window, SDL_FALSE); // Remove window border
+        SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP); // Turn on borderless fullscreen
+    }
+}

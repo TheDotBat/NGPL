@@ -139,9 +139,9 @@ void NGPL_CapFPS(Clock* clock);
 
 int NGPL_IsMouseHover(int mouseX, int mouseY, int pointX, int pointY, int size);
 
-NGPL_PoolE* NGPL_CreatePool(int maxSize);
+NGPL_PoolE* NGPL_CreatePoolE(int maxSize);
 
-void NGPL_AddToPool(NGPL_Entity* e, NGPL_PoolE* pool);
+void NGPL_AddToPoolE(NGPL_Entity* e, NGPL_PoolE* pool);
 
 char* NGPL_ReadFileToString(const char* filename);
 
@@ -162,5 +162,21 @@ void NGPL_CenterCameraOnEntity(Window win, NGPL_Camera* cam, NGPL_Entity* entity
 void NGPL_BoxCamera(NGPL_Camera* cam, NGPL_Entity* entity, SDL_Rect box, float deltaTime);
 
 void NGPL_PanCamera(NGPL_Camera* cam, Vector2F targetPosition, float interpolation, float deltaTime);
+
+void NGPL_UpdatePoolE(NGPL_PoolE* pool);
+
+NGPL_PoolR* NGPL_CreatePoolR();
+
+void NGPL_PoolRShowGrid(NGPL_PoolR* poolR, bool showGrid);
+
+void NGPL_PoolRShowBodies(NGPL_PoolR* poolR, bool showBodies);
+
+void NGPL_PoolRSetGridColor(NGPL_PoolR* poolR, NGPL_Color color);
+
+void NGPL_PoolRSetClearColor(NGPL_PoolR* poolR, NGPL_Color color);
+
+void NGPL_PoolRSetPoolE(NGPL_PoolR* poolR, NGPL_PoolE* poolE);
+
+void NGPL_PoolRClearScreen(NGPL_PoolR* poolR, bool clearScreen);
 
 #endif

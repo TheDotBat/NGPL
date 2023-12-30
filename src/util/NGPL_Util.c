@@ -161,7 +161,7 @@ int NGPL_IsMouseHover(int mouseX, int mouseY, int pointX, int pointY, int size)
             mouseY >= pointY - size/2 && mouseY <= pointY + size/2);
 }
 
-NGPL_PoolE* NGPL_CreatePool(int maxSize)
+NGPL_PoolE* NGPL_CreatePoolE(int maxSize)
 {
     NGPL_PoolE* pool = malloc(sizeof(NGPL_PoolE));
 
@@ -182,7 +182,7 @@ NGPL_PoolE* NGPL_CreatePool(int maxSize)
     return pool;
 }
 
-void NGPL_AddToPool(NGPL_Entity* e, NGPL_PoolE* pool)
+void NGPL_AddToPoolE(NGPL_Entity* e, NGPL_PoolE* pool)
 {
     if (pool->size >= pool->maxSize)
     {
@@ -318,3 +318,59 @@ void NGPL_PanCamera(NGPL_Camera* cam, Vector2F targetPosition, float interpolati
 
     cam->position = interpolatedPosition;
 }
+
+void NGPL_UpdatePoolE(NGPL_PoolE* pool)
+{
+    for (int i = 0; i < pool->size; i++)
+    {
+        NGPL_EntityUpdate(pool->entities[i]);
+    }
+}
+
+NGPL_PoolR* NGPL_CreatePoolR()
+{
+    NGPL_PoolR* poolR = malloc(sizeof(NGPL_PoolR));
+    poolR->clearScreen = true;
+    poolR->showSpaceGrid = false;
+    poolR->showSpaceBodies = false;
+    poolR->gridColor = (NGPL_Color){70,71,98,255};
+    poolR->clearColor = (NGPL_Color){22,30,61,255};
+    poolR->entityPool = NULL;
+    return poolR;
+}
+
+void NGPL_PoolRShowGrid(NGPL_PoolR* poolR, bool showGrid)
+{
+    poolR->showSpaceGrid = showGrid;
+}
+
+void NGPL_PoolRShowBodies(NGPL_PoolR* poolR, bool showBodies)
+{
+    poolR->showSpaceBodies = showBodies;
+}
+
+void NGPL_PoolRSetGridColor(NGPL_PoolR* poolR, NGPL_Color color)
+{
+    poolR->gridColor = color;
+}
+
+void NGPL_PoolRSetClearColor(NGPL_PoolR* poolR, NGPL_Color color)
+{
+    poolR->clearColor = color;
+}
+
+void NGPL_PoolRSetPoolE(NGPL_PoolR* poolR, NGPL_PoolE* poolE)
+{
+    poolR->entityPool = poolE;
+    if (poolR->entityPool == NULL)
+    {
+        printf("Error Setting RendererPool Entity pool\n");
+    }
+}
+
+void NGPL_PoolRClearScreen(NGPL_PoolR* poolR, bool clearScreen)
+{
+    poolR->clearScreen = clearScreen;
+}
+
+

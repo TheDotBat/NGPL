@@ -181,7 +181,7 @@ void NGPL_CreateSprite(NGPL_Entity* e, Vector2 size, NGPL_Color color)
  * Returns:
  *   Entity: The newly created and initialized game Entity.
  */
-NGPL_Entity NGPL_CreateEntity(PSpace* space, Vector2F position, Vector2 size, NGPL_Color color)
+NGPL_Entity NGPL_CreateEntity(NGPL_PSpace* space, Vector2F position, Vector2 size, NGPL_Color color)
 {
     NGPL_Entity e;
     e.rb = NULL;
@@ -242,4 +242,66 @@ void NGPL_LoadSetEntityImage(Renderer ren, NGPL_Entity* e, const char* fp)
 {
     e->sprite.image = NGPL_CreateTexture(ren, fp);
 }
+
+void NGPL_LayoutMapData(NGPL_PSpace* space, NGPL_PoolE* pool, Renderer ren, const char* mapDataPath, Vector2 tileSize)
+{
+    // Read the JSON file into a string
+    char* jsonContent = NGPL_ReadFileToString(mapDataPath); // Implement this function to read file content
+    if (jsonContent == NULL) {
+        printf("Error reading JSON file\n");
+        return;
+    }
+
+    // Parse the JSON content
+    cJSON* root = cJSON_Parse(jsonContent);
+    if (root == NULL) {
+        printf("Error parsing JSON\n");
+        free(jsonContent);
+        return;
+    }
+
+    // Iterate over each tile in the JSON array
+    cJSON* tiles = cJSON_GetObjectItemCaseSensitive(root, "tiles");
+    cJSON* tile;
+    cJSON_ArrayForEach(tile, tiles) {
+        cJSON* position = cJSON_GetObjectItemCaseSensitive(tile, "position");
+        cJSON* imagePath = cJSON_GetObjectItemCaseSensitive(tile, "imagePath"); 
+        cJSON* tileType = cJSON_GetObjectItemCaseSensitive(tile, "type"); 
+
+        int x = cJSON_GetObjectItemCaseSensitive(position, "x")->valueint;
+        int y = cJSON_GetObjectItemCaseSensitive(position, "y")->valueint;
+        const char* imagePathStr = imagePath->valuestring;
+        const char* tileTypeStr = tileType->valuestring;
+        bool isDynamic = !strcmp(tileTypeStr, "dynamic") ? true : false; // Check tile type
+        printf("Image Path Retrieved: %s\n",imagePathStr);
+
+        // Create the tile entity
+        NGPL_Entity* tileEntity = malloc(sizeof(NGPL_Entity));
+        if (tileEntity == NULL) {
+            continue; // Handle memory allocation failure
+        }
+
+        *tileEntity = NGPL_CreateEntity(space, (Vector2F){x*tileSize.x, y*tileSize.y}, (Vector2){tileSize.x, tileSize.y}, (NGPL_Color){0, 0, 255, 255});
+        tileEntity->sprite.image = NGPL_CreateTexture(ren, imagePathStr);
+        NGPL_CreateEntityRigidBody(space, true, tileEntity, 30.0, tileEntity->position, (Vector2){tileSize.x, tileSize.y});
+        if (isDynamic) 
+        {
+            NGPL_SetEntityImageOffsetX(tileEntity, 0);
+            NGPL_SetEntityImageOffsetY(tileEntity, 0);
+            NGPL_EntityUpdate(tileEntity);
+        } else {
+            NGPL_SetRigidBodyDynamic(tileEntity->rb, false);
+            NGPL_SetEntityImageOffsetX(tileEntity, 0);
+            NGPL_SetEntityImageOffsetY(tileEntity, 0);
+            NGPL_EntityUpdate(tileEntity);
+        }
+        NGPL_AddToPoolE(tileEntity, pool);
+    }
+    // Clean up
+    cJSON_Delete(root);
+    free(jsonContent);
+}
+
+
+
 

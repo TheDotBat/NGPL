@@ -1,6 +1,7 @@
 test/
 lib/
 SDL2-2.28.5/
+cJSON/
 setup/
 NGPL/
 include/*.dll
