@@ -10,6 +10,7 @@ Whether you're a seasoned developer or just starting out, NGPL provides an acces
 ## To The Stars.
 - NGPL is compiled using MinGW32 GCC.
 - NGPL is built upon version 2.28.5 of the SDL2 libraries and 2.8.2 of the SDL2_Image libraries.
+- NGPL incorporates the cJSON JSON parser from Dave Gamble. ( https://github.com/DaveGamble/cJSON )
 - It is recommended that developers also install MinGW32 GCC compiler to utilize NGPL as intended.
 
 # Installation
