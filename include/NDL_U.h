@@ -37,7 +37,7 @@
  * Returns:
  *   A fully initialized Clock object.
  */
-Clock NDL_CreateClock(int maxFPS);
+NDL_Clock NDL_CreateClock(int maxFPS);
 
 /*
  * Function: NDL_InitClock
@@ -54,7 +54,7 @@ Clock NDL_CreateClock(int maxFPS);
  * Returns:
  *   Void.
  */
-void NDL_InitClock(Clock* clock, int maxFPS);
+void NDL_InitClock(NDL_Clock* clock, int maxFPS);
 
 /*
  * Function: NDL_UpdateClock
@@ -70,7 +70,7 @@ void NDL_InitClock(Clock* clock, int maxFPS);
  * Returns:
  *   Void.
  */
-void NDL_UpdateClock(Clock* clock);
+void NDL_UpdateClock(NDL_Clock* clock);
 
 /*
  * Function: NDL_GetTicks
@@ -86,7 +86,7 @@ void NDL_UpdateClock(Clock* clock);
  * Returns:
  *   An unsigned 32-bit integer representing the time in milliseconds.
  */
-Uint32 NDL_GetTicks(Clock* clock);
+Uint32 NDL_GetTicks(NDL_Clock* clock);
 
 /*
  * Function: NDL_GetFPS
@@ -102,7 +102,7 @@ Uint32 NDL_GetTicks(Clock* clock);
  * Returns:
  *   A floating-point value representing the current FPS.
  */
-float NDL_GetFPS(Clock* clock);
+float NDL_GetFPS(NDL_Clock* clock);
 
 /*
  * Function: NDL_GetDeltaTime
@@ -118,7 +118,7 @@ float NDL_GetFPS(Clock* clock);
  * Returns:
  *   A floating-point value representing the delta time in seconds.
  */
-float NDL_GetDeltaTime(Clock* clock);
+float NDL_GetDeltaTime(NDL_Clock* clock);
 
 /*
  * Function: NDL_CapFPS
@@ -140,7 +140,7 @@ float NDL_GetDeltaTime(Clock* clock);
  * Returns:
  *   Void.
  */
-void NDL_CapFPS(Clock* clock);
+void NDL_CapFPS(NDL_Clock* clock);
 
 int NDL_IsMouseHover(int mouseX, int mouseY, int pointX, int pointY, int size);
 
@@ -148,7 +148,7 @@ char* NDL_ReadFileToString(const char* filename);
 
 Vector2F NDL_GetMouseVectorF();
 
-bool NDL_IsMouseOverRigidBody(ColliderComponent* rb);
+bool NDL_IsMouseOverRigidBody(NDL_ColliderComponent* rb);
 
 bool NDL_IsMouseAtPoint(int x, int y);
 
@@ -191,7 +191,7 @@ Controller NDL_OpenController();
  *   PLAYER_ACTION_MOVE_LEFT, PLAYER_ACTION_MOVE_RIGHT, PLAYER_ACTION_JUMP,
  *   and PLAYER_ACTION_MENU, depending on the key states.
  */
-PlayerActions NDL_GetPlayerActions();
+NDL_PlayerActions NDL_GetPlayerActions();
 
 /*
  * Function: NDL_SetKeyBinds

@@ -13,7 +13,7 @@ Uint32 Controller_SubSystem = SDL_INIT_GAMECONTROLLER;
 
 
 
-NDL_Entity* CreateEntity()
+NDL_Entity* NDL_CreateEntity()
 {
     NDL_Entity* e = malloc(sizeof(NDL_Entity));
     e->tag = NULL;
@@ -24,9 +24,9 @@ NDL_Entity* CreateEntity()
     return e;
 }
 
-Pool* CreatePool(int poolSize)
+NDL_Pool* NDL_CreatePool(int poolSize)
 {
-    Pool* pool = malloc(sizeof(Pool));
+    NDL_Pool* pool = malloc(sizeof(NDL_Pool));
     pool->size = 0;
     pool->maxSize = poolSize;
     pool->entities = malloc(sizeof(NDL_Entity)*pool->size);
@@ -37,7 +37,7 @@ Pool* CreatePool(int poolSize)
     return pool;
 }
 
-void AddToPool(NDL_Entity* e, Pool* pool)
+void NDL_AddToPool(NDL_Entity* e, NDL_Pool* pool)
 {
     if (pool->size >= pool->maxSize)
     {
@@ -48,9 +48,9 @@ void AddToPool(NDL_Entity* e, Pool* pool)
     ++pool->size;
 }
 
-ColliderComponent* CreateColliderComponent(float x, float y, int w, int h)
+NDL_ColliderComponent* NDL_CreateColliderComponent(float x, float y, int w, int h)
 {
-    ColliderComponent* collider = malloc(sizeof(ColliderComponent)); // Dynamically allocate memory for NDL_RigidBody
+    NDL_ColliderComponent* collider = malloc(sizeof(NDL_ColliderComponent)); // Dynamically allocate memory for NDL_RigidBody
     if (collider == NULL) {
         // Handle the error in case malloc fails
         return NULL;
@@ -69,9 +69,9 @@ ColliderComponent* CreateColliderComponent(float x, float y, int w, int h)
     return collider; // Return a pointer to the newly created NDL_RigidBody
 }
 
-void AddSpriteComponent(NDL_Entity *entity, Vector2 size, NDL_Color spriteColor)
+void NDL_AddSpriteComponent(NDL_Entity *entity, Vector2 size, NDL_Color spriteColor)
 {
-    SpriteComponent* sprite = malloc(sizeof(SpriteComponent));
+    NDL_SpriteComponent* sprite = malloc(sizeof(NDL_SpriteComponent));
     sprite->color = spriteColor;
     sprite->imageOffset = (Vector2){0,0};
     sprite->imageRect = (Rect){0,0,size.x,size.y};
@@ -80,9 +80,9 @@ void AddSpriteComponent(NDL_Entity *entity, Vector2 size, NDL_Color spriteColor)
     entity->componentFlags |= SPRITE_COMPONENT;
 }
 
-void AddColliderComponent(NDL_Entity* entity, Vector2 size, NDL_Color colliderColor)
+void NDL_AddColliderComponent(NDL_Entity* entity, Vector2 size, NDL_Color colliderColor)
 {
-    ColliderComponent* collider = CreateColliderComponent(entity->position.x, entity->position.y, size.x, size.y);
+    NDL_ColliderComponent* collider = NDL_CreateColliderComponent(entity->position.x, entity->position.y, size.x, size.y);
     entity->collider = collider;
     entity->componentFlags |= COLLIDER_COMPONENT;
     if (entity->collider == NULL)
@@ -92,17 +92,17 @@ void AddColliderComponent(NDL_Entity* entity, Vector2 size, NDL_Color colliderCo
     }
 }
 
-void RemComponent(NDL_Entity* e, Components component)
+void NDL_RemComponent(NDL_Entity* e, Components component)
 {
     e->componentFlags &= ~component;
 }
 
-bool HasComponent(NDL_Entity* e, Components component)
+bool NDL_HasComponent(NDL_Entity* e, Components component)
 {
     return (e->componentFlags & component) == component;
 }
 
-void AddSpriteTexture(Renderer ren, NDL_Entity* e, const char* fp)
+void NDL_AddSpriteTexture(Renderer ren, NDL_Entity* e, const char* fp)
 {
     e->sprite->image = NDL_CreateTexture(ren, fp);
     if (e->sprite->image == NULL)
@@ -112,52 +112,52 @@ void AddSpriteTexture(Renderer ren, NDL_Entity* e, const char* fp)
     }
 }
 
-void SetEntityTag(NDL_Entity* entity, const char* tag)
+void NDL_SetEntityTag(NDL_Entity* entity, const char* tag)
 {
     entity->tag = tag;
 }
 
-void SetEntityDynamic(NDL_Entity* entity, bool set)
+void NDL_SetEntityDynamic(NDL_Entity* entity, bool set)
 {
     entity->isDynamic = set;
 }
 
-void SetEntityMass(NDL_Entity* e, float mass)
+void NDL_SetEntityMass(NDL_Entity* e, float mass)
 {
     e->collider->mass = mass;
 }
 
-void RemEntityTag(NDL_Entity* entity)
+void NDL_RemEntityTag(NDL_Entity* entity)
 {
     entity->tag = NULL;
 }
 
-void RemSpriteComponent(NDL_Entity* entity)
+void NDL_RemSpriteComponent(NDL_Entity* entity)
 {
-    RemComponent(entity, SPRITE_COMPONENT);
+    NDL_RemComponent(entity, SPRITE_COMPONENT);
     entity->sprite = NULL;
 }
 
-void RemColliderComponent(NDL_Entity* entity)
+void NDL_RemColliderComponent(NDL_Entity* entity)
 {
-    RemComponent(entity, COLLIDER_COMPONENT);
+    NDL_RemComponent(entity, COLLIDER_COMPONENT);
     entity->collider = NULL;
 }
 
-void UpdateSystem(RenderSystem* renSys, PhysicsSystem* physicsSystem, float deltaTime, int UPF)
+void NDL_UpdateSystem(NDL_RenderSystem* renSys, NDL_PhysicsSystem* physicsSystem, float deltaTime, int UPF)
 {
     for (int i = 0; i < physicsSystem->gridSpace->r; ++i)   // rows
     {
         for (int j = 0; j < physicsSystem->gridSpace->c; ++j)   // cols
         {
             Cell cell = physicsSystem->gridSpace->cells[i][j];
-            renSys->pool = cell.pool;
+            if (renSys->renderSpace) renSys->pool = cell.pool;
             for (int e = 0; e < cell.pool->size; ++e)
             {
                 NDL_Entity* entity = cell.pool->entities[e];
-                entity->collider->velocity = entity->velocity;
-                if (HasComponent(entity, COLLIDER_COMPONENT))
+                if (NDL_HasComponent(entity, COLLIDER_COMPONENT))
                 {
+                    entity->collider->velocity = entity->velocity;
                     if (entity->isDynamic)
                     {
                         physicsSystem->handleForces(entity, physicsSystem);
@@ -171,31 +171,57 @@ void UpdateSystem(RenderSystem* renSys, PhysicsSystem* physicsSystem, float delt
     }
 }
 
-void SetPhysicsSystemGravity(PhysicsSystem* phys, float gravity)
+void NDL_SetPhysicsSystemGravity(NDL_PhysicsSystem* phys, float gravity)
 {
     phys->gravity = gravity;
 }
 
-void SetPhysicsSystemFrictionX(PhysicsSystem* phys, float frictionX)
+void NDL_SetPhysicsSystemFrictionX(NDL_PhysicsSystem* phys, float frictionX)
 {
     phys->friction.x = frictionX;
 }
 
-void SetPhysicsSystemFrictionY(PhysicsSystem* phys, float frictionY)
+void NDL_SetPhysicsSystemFrictionY(NDL_PhysicsSystem* phys, float frictionY)
 {
     phys->friction.x = frictionY;
 }
 
-bool EnablePhysicsSystemFrictionX(PhysicsSystem* phys, bool frictionX)
+bool NDL_EnablePhysicsSystemFrictionX(NDL_PhysicsSystem* phys, bool frictionX)
 {
     phys->frictionX = frictionX;
     return phys->frictionX;
 }
 
-bool EnablePhysicsSystemFrictionY(PhysicsSystem* phys, bool frictionY)
+bool NDL_EnablePhysicsSystemFrictionY(NDL_PhysicsSystem* phys, bool frictionY)
 {
     phys->frictionY = frictionY;
     return phys->frictionY;
+}
+
+void NDL_SetRenderSystemRenderSpace(NDL_RenderSystem* renSys, bool renderSpace)
+{
+    if (renderSpace)
+    {
+        renSys->renderSpace = renderSpace;
+    }else {
+        renSys->renderSpace = renderSpace;
+        renSys->pool = NDL_CreatePool(1);
+    }
+}
+
+void NDL_SetRenderSystemPool(NDL_RenderSystem* renSys, NDL_Pool* pool)
+{
+    renSys->pool = pool;
+}
+
+void NDL_SetRenderSystemShowColliders(NDL_RenderSystem* renSys, bool showColliders)
+{
+    renSys->showColliders = showColliders;
+}
+
+void NDL_SetRenderSystemClearColor(NDL_RenderSystem* renSys, NDL_Color clearColor)
+{
+    renSys->clearColor = clearColor;
 }
 
 /*
@@ -372,3 +398,22 @@ const Uint8* NDL_GetKeyState(int* numKeys)
     const Uint8* keyboardState = SDL_GetKeyboardState(numKeys);
     return keyboardState;
 }
+
+void NDL_AddAnimationComponent(NDL_Entity *entity, NDL_ImageSet* images, bool loop, int flipRate)
+{
+    NDL_AnimationComponent* anim = malloc(sizeof(NDL_AnimationComponent));
+    anim->loop = loop;
+    anim->imageSet = images;
+    anim->currentFrame = 0;
+    anim->flipRate = flipRate;
+    anim->flip = NDL_AnimationFlip;
+    entity->sprite->animation = anim;
+    entity->componentFlags |= ANIMATION_COMPONENT;
+}
+
+void NDL_SetAnimationImageSet(NDL_ImageSet* imageSet, NDL_AnimationComponent* anim)
+{
+    anim->imageSet = imageSet;
+    if (anim->imageSet == NULL) printf("Error adding image set to animation!\n");
+}
+

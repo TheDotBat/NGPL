@@ -23,10 +23,6 @@
 #define NDL_M_H
 #include "NDL.h"
 
-#define max(a,b) (((a) > (b)) ? (a) : (b))
-#define min(a,b) (((a) < (b)) ? (a) : (b))
-
-
 
 /*
  * Function: NDL_GetMagnitude

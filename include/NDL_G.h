@@ -49,7 +49,7 @@ Window NDL_CreateWindow(int width, int height, const char* title);
  *
  * returns: A pointer to an SDL2 Renderer struct created with the passed parameters.
 */
-Renderer NDL_CreateRenderer(Window window, int driverIndex, Uint32 flags);
+Renderer NDL_CreateRenderer(Window window, Uint32 flags);
 
 /*
  * Function: NDL_ClearScreen
@@ -99,14 +99,18 @@ void NDL_BlitRect(Renderer ren, NDL_Rect* r, NDL_Color color);
 
 void NDL_ToggleBorderless(Window window);
 
-void FillRect(Renderer ren, Rect* rect, NDL_Color color);
+void NDL_FillRect(Renderer ren, Rect* rect, NDL_Color color);
 
-void BlitColliderComponent(Renderer ren, ColliderComponent* collider, NDL_Color color);
+void NDL_BlitColliderComponent(Renderer ren, NDL_ColliderComponent* collider, NDL_Color color);
 
-void Render(RenderSystem* renSys);
+void NDL_Render(NDL_RenderSystem* renSys, float deltaTime);
 
-RenderSystem* CreateRenderSystem(Renderer sdlRenderer, NDL_Color clearColor);
+NDL_RenderSystem* NDL_CreateRenderSystem(Renderer sdlRenderer, NDL_Color clearColor);
 
-void SetRenderSystemPool(RenderSystem* renSys, Pool* pool);
+NDL_ImageSet* NDL_CreateImageSet_PNG(Renderer ren, const char* fp);
+
+NDL_Texture* NDL_AnimationFlip(NDL_AnimationComponent* anim, float deltaTime);
+
+NDL_AnimationComponent* NDL_CreateAnimation(bool loop, int flipRate);
 
 #endif

@@ -26,15 +26,13 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <windows.h>
 #include <string.h>
 //#include "SDL.h"
 #include "cJSON.h"
 #include "SDL_image.h"
 #undef main
 
-
-#define MAX_CACHE_KEY_SIZE 50
-#define INITIAL_RENDER_SYS_CAPACITY 10
 
 #define NDL_KEY_UP_ARROW SDL_SCANCODE_UP
 #define NDL_KEY_DOWN_ARROW SDL_SCANCODE_DOWN
@@ -132,27 +130,30 @@ typedef SDL_Surface NDL_Surface;
 typedef SDL_Color NDL_Color;
 typedef struct Vector2 Vector2;
 typedef struct Vector2F Vector2F;
-typedef struct CollisionData CollisionData;
+typedef struct NDL_CollisionData NDL_CollisionData;
 typedef struct NDL_Edge NDL_Edge;
 typedef struct NDL_Camera NDL_Camera;
-typedef struct PhysicsSystem PhysicsSystem;
-typedef struct RenderSystem RenderSystem;
-typedef struct PhysicsGrid PhysicsGrid;
-typedef struct Clock Clock;
+typedef struct NDL_PhysicsSystem NDL_PhysicsSystem;
+typedef struct NDL_RenderSystem NDL_RenderSystem;
+typedef struct NDL_PhysicsGrid NDL_PhysicsGrid;
+typedef struct NDL_Clock NDL_Clock;
 typedef struct NDL_Entity NDL_Entity;
 typedef struct Keybinds Keybinds;
 typedef struct NDL_Rect NDL_Rect;
 typedef enum Components Components;
-typedef struct SpriteComponent SpriteComponent;
-typedef enum COLLISION_TYPES COLLISION_TYPES;
-typedef struct ColliderComponent ColliderComponent;
-typedef struct Pool Pool;
-typedef enum PlayerActions PlayerActions;
+typedef struct NDL_ImageSet NDL_ImageSet;
+typedef struct NDL_AnimationComponent NDL_AnimationComponent;
+typedef NDL_Texture* (*AnimFlipMethod) (NDL_AnimationComponent*, float);
+typedef struct NDL_SpriteComponent NDL_SpriteComponent;
+typedef enum NDL_COLLISION_TYPES NDL_COLLISION_TYPES;
+typedef struct NDL_ColliderComponent NDL_ColliderComponent;
+typedef struct NDL_Pool NDL_Pool;
+typedef enum NDL_PlayerActions NDL_PlayerActions;
 typedef struct Cell Cell;
-typedef void (*ForceMethod) (NDL_Entity*, PhysicsSystem*);
-typedef void (*PosMethod) (PhysicsSystem*, NDL_Entity*, float, int);
-typedef bool (*ColMethod) (PhysicsGrid*);
-typedef void (*RenderMethod) ();
+typedef void (*ForceMethod) (NDL_Entity*, NDL_PhysicsSystem*);
+typedef void (*PosMethod) (NDL_PhysicsSystem*, NDL_Entity*, float, int);
+typedef bool (*ColMethod) (NDL_PhysicsGrid*);
+typedef void (*RenderMethod) (NDL_RenderSystem*, float);
 Uint32 Video_SubSystem;
 Uint32 Audio_SubSystem;
 Uint32 Timer_SubSystem;
@@ -194,19 +195,21 @@ struct NDL_Rect
 enum Components
 {
     NO_COMPONENT = 0,
-    SPRITE_COMPONENT = 1<<0, //0001
-    COLLIDER_COMPONENT = 1<<1 //0010
+    SPRITE_COMPONENT = 1<<0,    //0001
+    COLLIDER_COMPONENT = 1<<1,  //0010
+    ANIMATION_COMPONENT = 1<<2  //0100
 };
 
-struct SpriteComponent
+struct NDL_SpriteComponent
 {
     Rect imageRect;
     NDL_Color color;
     NDL_Texture* image;
     Vector2 imageOffset;
+    NDL_AnimationComponent* animation;
 };
 
-enum COLLISION_TYPES
+enum NDL_COLLISION_TYPES
 {
     L,
     R,
@@ -215,7 +218,7 @@ enum COLLISION_TYPES
     None
 };
 
-struct ColliderComponent
+struct NDL_ColliderComponent
 {
     const char* tag;
     bool isDynamic;
@@ -233,11 +236,11 @@ struct NDL_Entity
     Vector2F position;
     Vector2F velocity;
     unsigned int componentFlags;
-    SpriteComponent* sprite;
-    ColliderComponent* collider;
+    NDL_SpriteComponent* sprite;
+    NDL_ColliderComponent* collider;
 };
 
-struct Pool
+struct NDL_Pool
 {
     int size;
     int maxSize;
@@ -251,21 +254,22 @@ struct NDL_Camera
     float scrollInterpolation;
 };
 
-struct RenderSystem
+struct NDL_RenderSystem
 {
     bool showColliders;
+    bool renderSpace;
     Renderer sdlRenderer;
-    Pool* pool;
+    NDL_Pool* pool;
     NDL_Color clearColor;
     RenderMethod render;
 };
 
 struct Cell
 {
-    Pool* pool;
+    NDL_Pool* pool;
 };
 
-struct PhysicsGrid
+struct NDL_PhysicsGrid
 {
     int w,h;
     int r,c;
@@ -273,12 +277,12 @@ struct PhysicsGrid
     Cell** cells;
 };
 
-struct PhysicsSystem
+struct NDL_PhysicsSystem
 {
     bool forTopDown;
     bool frictionX;
     bool frictionY;
-    PhysicsGrid* gridSpace;
+    NDL_PhysicsGrid* gridSpace;
     float gravity;
     Vector2F friction;
     ForceMethod handleForces;
@@ -286,20 +290,20 @@ struct PhysicsSystem
     ColMethod handleCollisions;
 };
 
-struct CollisionData
+struct NDL_CollisionData
 {
     bool none;
-    ColliderComponent* _for;
-    ColliderComponent* _against;
+    NDL_ColliderComponent* _for;
+    NDL_ColliderComponent* _against;
     Vector2F _point;  // Collision point
     float _massFor;
     float _massAgainst;
     Vector2F _velocityFor;
-    COLLISION_TYPES _typeX;
-    COLLISION_TYPES _typeY;
+    NDL_COLLISION_TYPES _typeX;
+    NDL_COLLISION_TYPES _typeY;
 };
 
-struct Clock
+struct NDL_Clock
 {
     float FPS;
     int maxFPS;
@@ -326,7 +330,7 @@ struct Clock
  *   PLAYER_ACTION_JUMP: Represents the action of jumping (0100 in binary).
  *   PLAYER_ACTION_MENU: Represents the action of opening the menu (1000 in binary).
  */
-enum PlayerActions
+enum NDL_PlayerActions
 {
     PLAYER_ACTION_NONE = 0,
     PLAYER_ACTION_MOVE_LEFT = 1 << 0, // 0001
@@ -364,5 +368,21 @@ struct Keybinds
    SDL_Scancode attack; // New control
 };
 Keybinds keyBinds;
+
+struct NDL_ImageSet
+{
+    int imageCount;
+    NDL_Texture** images;
+};
+
+struct NDL_AnimationComponent
+{
+    bool loop;
+    NDL_ImageSet* imageSet;
+    int currentFrame;
+    int flipRate;
+    AnimFlipMethod flip;
+};
+
 
 #endif

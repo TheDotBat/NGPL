@@ -24,32 +24,32 @@
 #include "NDL.h"
 
 
-PhysicsGrid* CreatePhysicsGrid(int w, int h, int nRows, int nCols, int cellSize, int cellCapacity);
+NDL_PhysicsGrid* NDL_CreatePhysicsGrid(int w, int h, int nRows, int nCols, int cellSize, int cellCapacity);
 
-bool AABB_NegX(NDL_Entity* ent1, NDL_Entity* ent2);
+bool NDL_AABB_NegX(NDL_Entity* ent1, NDL_Entity* ent2);
 
-bool AABB_PosX(NDL_Entity* ent1, NDL_Entity* ent2);
+bool NDL_AABB_PosX(NDL_Entity* ent1, NDL_Entity* ent2);
 
-bool AABB_NegY(NDL_Entity* ent1, NDL_Entity* ent2);
+bool NDL_AABB_NegY(NDL_Entity* ent1, NDL_Entity* ent2);
 
-bool AABB_PosY(NDL_Entity* ent1, NDL_Entity* ent2);
+bool NDL_AABB_PosY(NDL_Entity* ent1, NDL_Entity* ent2);
 
-CollisionData GenerateCollisionInfo_P(NDL_Entity* ent1, NDL_Entity* ent2);
+NDL_CollisionData NDL_GenerateCollisionInfo_P(NDL_Entity* ent1, NDL_Entity* ent2);
 
-bool ObserveCollision_P(PhysicsGrid* grid);
+bool NDL_ObserveCollision_P(NDL_PhysicsGrid* grid);
 
-void UpdateColliderComponent_P(ColliderComponent* collider, float deltaTime);
+void NDL_UpdateColliderComponent_P(NDL_ColliderComponent* collider, float deltaTime);
 
-void CalcFrictionX_P(PhysicsSystem* phys, NDL_Entity* e);
+void NDL_CalcFrictionX_P(NDL_PhysicsSystem* phys, NDL_Entity* e);
 
-void CalcFrictionY_P(PhysicsSystem* phys, NDL_Entity* e);
+void NDL_CalcFrictionY_P(NDL_PhysicsSystem* phys, NDL_Entity* e);
 
-void HandleForces_P(NDL_Entity* e, PhysicsSystem* phys);
+void NDL_HandleForces_P(NDL_Entity* e, NDL_PhysicsSystem* phys);
 
-void HandlePositionsColliderComponent_P(PhysicsSystem* phys, NDL_Entity* e, float deltaTime, int UPF);
+void NDL_HandlePositions_P(NDL_PhysicsSystem* phys, NDL_Entity* e, float deltaTime, int UPF);
 
-PhysicsSystem* CreatePhysicsSystem(int gridSpaceW, int gridSpaceH, int nRows, int nCols, int gridSpaceCellSize, int gridSpaceCellCapacity);
+NDL_PhysicsSystem* NDL_CreatePhysicsSystem(int gridSpaceW, int gridSpaceH, int nRows, int nCols, int gridSpaceCellSize, int gridSpaceCellCapacity);
 
-void AddEntityToGrid(NDL_Entity* e, PhysicsGrid* grid);
+void NDL_AddEntityToGrid(NDL_Entity* e, NDL_PhysicsGrid* grid);
 
 #endif

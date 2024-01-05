@@ -16,9 +16,9 @@ Keybinds keybinds;
  * Returns:
  *   A fully initialized Clock object.
  */
-Clock NDL_CreateClock(int maxFPS)
+NDL_Clock NDL_CreateClock(int maxFPS)
 {
-    Clock clock;
+    NDL_Clock clock;
     NDL_InitClock(&clock, maxFPS);
     return clock;
 }
@@ -38,7 +38,7 @@ Clock NDL_CreateClock(int maxFPS)
  * Returns:
  *   Void.
  */
-void NDL_InitClock(Clock* clock, int maxFPS)
+void NDL_InitClock(NDL_Clock* clock, int maxFPS)
 {
     clock->FPS = 0.0f;
     clock->maxFPS = maxFPS;
@@ -63,7 +63,7 @@ void NDL_InitClock(Clock* clock, int maxFPS)
  * Returns:
  *   Void.
  */
-void NDL_UpdateClock(Clock* clock) {
+void NDL_UpdateClock(NDL_Clock* clock) {
     clock->currentTime = NDL_GetTicks(clock);
     clock->deltaTime = (clock->currentTime - clock->lastTime) / 1000.0f;
     clock->frameCount++;
@@ -87,7 +87,7 @@ void NDL_UpdateClock(Clock* clock) {
  * Returns:
  *   An unsigned 32-bit integer representing the time in milliseconds.
  */
-Uint32 NDL_GetTicks(Clock* clock)
+Uint32 NDL_GetTicks(NDL_Clock* clock)
 {
     return SDL_GetTicks();
 }
@@ -106,7 +106,7 @@ Uint32 NDL_GetTicks(Clock* clock)
  * Returns:
  *   A floating-point value representing the current FPS.
  */
-float NDL_GetFPS(Clock* clock)
+float NDL_GetFPS(NDL_Clock* clock)
 {
     return clock->FPS;
 }
@@ -125,7 +125,7 @@ float NDL_GetFPS(Clock* clock)
  * Returns:
  *   A floating-point value representing the delta time in seconds.
  */
-float NDL_GetDeltaTime(Clock* clock) {
+float NDL_GetDeltaTime(NDL_Clock* clock) {
     return clock->deltaTime;
 }
 
@@ -149,7 +149,7 @@ float NDL_GetDeltaTime(Clock* clock) {
  * Returns:
  *   Void.
  */
-void NDL_CapFPS(Clock* clock) {
+void NDL_CapFPS(NDL_Clock* clock) {
     Uint32 frameTime = NDL_GetTicks(clock) - clock->currentTime;
     if (frameTime < clock->TPF) {
         SDL_Delay((Uint32)clock->TPF - frameTime);
@@ -208,7 +208,7 @@ Vector2F NDL_GetMouseVectorF()
     return mousePos;
 }
 
-bool NDL_IsMouseOverRigidBody(ColliderComponent* rb)
+bool NDL_IsMouseOverRigidBody(NDL_ColliderComponent* rb)
 {
     Vector2F mousePos = NDL_GetMouseVectorF();
     SDL_Point mousePoint = {(int)mousePos.x, (int)mousePos.y};
@@ -246,12 +246,11 @@ NDL_Camera* NDL_CreateCamera(Vector2F position, float panSpeed, float interpolat
 void NDL_CenterCameraOnEntity(Window win, NDL_Camera* cam, NDL_Entity* entity, float deltaTime)
 {
     Vector2F targetCenter = {entity->position.x + entity->sprite->imageRect.w / 2, entity->position.y + entity->sprite->imageRect.h / 2};
-    Vector2F screenSize = (Vector2F){1400.0,600.0};
-    // Vector2F screenSize = (Vector2F){NDL_GetWindowSize(win).x, NDL_GetWindowSize(win).y};
+    Vector2F screenSize = (Vector2F){NDL_GetWindowSize(win).x, NDL_GetWindowSize(win).y};
     Vector2F desiredScroll = {targetCenter.x - screenSize.x / 2, targetCenter.y - screenSize.y / 2};
 
-    cam->position.x += (desiredScroll.x - cam->position.x) * cam->cameraSpeed * deltaTime / cam->scrollInterpolation;
-    cam->position.y += (desiredScroll.y - cam->position.y) * cam->cameraSpeed * deltaTime / cam->scrollInterpolation;
+    cam->position.x += (desiredScroll.x - cam->position.x) * cam->cameraSpeed * deltaTime * cam->scrollInterpolation;
+    cam->position.y += (desiredScroll.y - cam->position.y) * cam->cameraSpeed * deltaTime * cam->scrollInterpolation;
 }
 
 void NDL_BoxCamera(NDL_Camera* cam, NDL_Entity* entity, SDL_Rect box, float deltaTime)
@@ -332,10 +331,10 @@ Controller NDL_OpenController()
  *   PLAYER_ACTION_MOVE_LEFT, PLAYER_ACTION_MOVE_RIGHT, PLAYER_ACTION_JUMP,
  *   and PLAYER_ACTION_MENU, depending on the key states.
  */
-PlayerActions NDL_GetPlayerActions()
+NDL_PlayerActions NDL_GetPlayerActions()
 {
     const Uint8* state = NDL_GetKeyState(NULL);
-    PlayerActions actions = PLAYER_ACTION_NONE;
+    NDL_PlayerActions actions = PLAYER_ACTION_NONE;
 
     if (state[keyBinds.moveLeft]) {
         actions |= PLAYER_ACTION_MOVE_LEFT;

@@ -25,47 +25,6 @@
 #include "NDL_C.h"
 
 
-
-NDL_Entity* CreateEntity();
-
-Pool* CreatePool(int poolSize);
-
-void AddToPool(NDL_Entity* e, Pool* pool);
-
-ColliderComponent* CreateColliderComponent(float x, float y, int w, int h);
-
-void AddSpriteComponent(NDL_Entity *entity, Vector2 size, NDL_Color spriteColor);
-
-void AddColliderComponent(NDL_Entity* entity, Vector2 size, NDL_Color colliderColor);
-
-void RemComponent(NDL_Entity* e, Components component);
-
-bool HasComponent(NDL_Entity* e, Components component);
-
-void AddSpriteTexture(Renderer ren, NDL_Entity* e, const char* fp);
-
-void SetEntityTag(NDL_Entity* entity, const char* tag);
-
-void SetEntityDynamic(NDL_Entity* entity, bool set);
-
-void RemEntityTag(NDL_Entity* entity);
-
-void RemSpriteComponent(NDL_Entity* entity);
-
-void RemColliderComponent(NDL_Entity* entity);
-
-void UpdateSystem(RenderSystem* renSys, PhysicsSystem* physicsSystem, float deltaTime, int UPF);
-
-void SetPhysicsSystemGravity(PhysicsSystem* phys, float gravity);
-
-void SetPhysicsSystemFrictionX(PhysicsSystem* phys, float frictionX);
-
-void SetPhysicsSystemFrictionY(PhysicsSystem* phys, float frictionY);
-
-bool EnablePhysicsSystemFrictionX(PhysicsSystem* phys, bool frictionX);
-
-bool EnablePhysicsSystemFrictionY(PhysicsSystem* phys, bool frictionY);
-
 /*
  * Function: NDL_Test
  * ----------------------------
@@ -98,7 +57,7 @@ void NDL_Init();
  * Returns: 
  *    Void
  */
-void NGPL_InitG();
+void NDL_InitG();
 
 /*
  * Function: NDL_InitSubSystem
@@ -182,6 +141,60 @@ void NDL_CleanUp(Renderer renderer, Window window);
  *   and its value will be 1 if the key is pressed and 0 if it is not.
  */
 const Uint8* NDL_GetKeyState(int* numKeys);
+
+NDL_Entity* NDL_CreateEntity();
+
+NDL_Pool* NDL_CreatePool(int poolSize);
+
+void NDL_AddToPool(NDL_Entity* e, NDL_Pool* pool);
+
+NDL_ColliderComponent* NDL_CreateColliderComponent(float x, float y, int w, int h);
+
+void NDL_AddSpriteComponent(NDL_Entity *entity, Vector2 size, NDL_Color spriteColor);
+
+void NDL_AddColliderComponent(NDL_Entity* entity, Vector2 size, NDL_Color colliderColor);
+
+void NDL_RemComponent(NDL_Entity* e, Components component);
+
+bool NDL_HasComponent(NDL_Entity* e, Components component);
+
+void NDL_AddSpriteTexture(Renderer ren, NDL_Entity* e, const char* fp);
+
+void NDL_SetEntityTag(NDL_Entity* entity, const char* tag);
+
+void NDL_SetEntityDynamic(NDL_Entity* entity, bool set);
+
+void NDL_SetEntityMass(NDL_Entity* e, float mass);
+
+void NDL_RemEntityTag(NDL_Entity* entity);
+
+void NDL_RemSpriteComponent(NDL_Entity* entity);
+
+void NDL_RemColliderComponent(NDL_Entity* entity);
+
+void NDL_UpdateSystem(NDL_RenderSystem* renSys, NDL_PhysicsSystem* physicsSystem, float deltaTime, int UPF);
+
+void NDL_SetPhysicsSystemGravity(NDL_PhysicsSystem* phys, float gravity);
+
+void NDL_SetPhysicsSystemFrictionX(NDL_PhysicsSystem* phys, float frictionX);
+
+void NDL_SetPhysicsSystemFrictionY(NDL_PhysicsSystem* phys, float frictionY);
+
+bool NDL_EnablePhysicsSystemFrictionX(NDL_PhysicsSystem* phys, bool frictionX);
+
+bool NDL_EnablePhysicsSystemFrictionY(NDL_PhysicsSystem* phys, bool frictionY);
+
+void NDL_SetRenderSystemRenderSpace(NDL_RenderSystem* renSys, bool renderSpace);
+
+void NDL_SetRenderSystemPool(NDL_RenderSystem* renSys, NDL_Pool* pool);
+
+void NDL_SetRenderSystemShowColliders(NDL_RenderSystem* renSys, bool showColliders);
+
+void NDL_SetRenderSystemClearColor(NDL_RenderSystem* renSys, NDL_Color clearColor);
+
+void NDL_AddAnimationComponent(NDL_Entity *entity, NDL_ImageSet* images, bool loop, int flipRate);
+
+void NDL_SetAnimationImageSet(NDL_ImageSet* imageSet, NDL_AnimationComponent* anim);
 
 #include "NDL_P.h"
 #include "NDL_G.h"
