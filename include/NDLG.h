@@ -19,13 +19,9 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef NGPL_H
-#define NGPL_H
+#ifndef NDLG_H
+#define NDLG_H
+#include "NDL.h"
 
-#include "NGPL_Core.h"
-#include "NGPL_Math.h"
-#include "NGPL_Util.h"
-#include "NGPL_Graphics.h"
-#include "NGPL_Audio.h"
 
 #endif

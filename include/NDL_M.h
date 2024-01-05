@@ -19,19 +19,17 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef NGPL_MATH_H
-#define NGPL_MATH_H
-#include "NGPL.h"
+#ifndef NDL_M_H
+#define NDL_M_H
+#include "NDL.h"
 
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 
-// Structs
 
 
-// Functions
 /*
- * Function: NGPL_GetMagnitude
+ * Function: NDL_GetMagnitude
  * ----------------------------
  * Calculates the magnitude of a vector given its x and y coordinates.
  *
@@ -40,10 +38,10 @@
  *
  * returns: Magnitude of the vector
  */
-double NGPL_GetMagnitude(float x, float y);
+double NDL_GetMagnitude(float x, float y);
 
 /*
- * Function: NGPL_AddVector
+ * Function: NDL_AddVector
  * -------------------
  * Adds two Vector2F structures and returns the result.
  *
@@ -57,10 +55,10 @@ double NGPL_GetMagnitude(float x, float y);
  * Returns:
  *   Vector2F: The sum of the two vectors.
  */
-Vector2F NGPL_AddVector(Vector2F v1, Vector2F v2);
+Vector2F NDL_AddVector(Vector2F v1, Vector2F v2);
 
 /*
- * Function: NGPL_MultiplyVector
+ * Function: NDL_MultiplyVector
  * ------------------------
  * Multiplies a Vector2F by a scalar and returns the result.
  *
@@ -74,6 +72,6 @@ Vector2F NGPL_AddVector(Vector2F v1, Vector2F v2);
  * Returns:
  *   Vector2F: The scaled vector.
  */
-Vector2F NGPL_MultiplyVector(Vector2F v, float scalar);
+Vector2F NDL_MultiplyVector(Vector2F v, float scalar);
 
 #endif

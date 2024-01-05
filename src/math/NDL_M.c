@@ -1,7 +1,5 @@
-#include "../../include/NGPL_Math.h"
+#include "../../include/NDL_M.h"
 
-
-// Functions
 /*
  * Function: addVector
  * -------------------
@@ -17,7 +15,7 @@
  * Returns:
  *   Vector2F: The sum of the two vectors.
  */
-Vector2F NGPL_AddVector(Vector2F v1, Vector2F v2) {
+Vector2F NDL_AddVector(Vector2F v1, Vector2F v2) {
     Vector2F result = {v1.x + v2.x, v1.y + v2.y};
     return result;
 }
@@ -37,13 +35,13 @@ Vector2F NGPL_AddVector(Vector2F v1, Vector2F v2) {
  * Returns:
  *   Vector2F: The scaled vector.
  */
-Vector2F NGPL_MultiplyVector(Vector2F v, float scalar) {
+Vector2F NDL_MultiplyVector(Vector2F v, float scalar) {
     Vector2F result = {v.x * scalar, v.y * scalar};
     return result;
 }
 
 /*
- * Function: NGPL_GetMagnitude
+ * Function: NDL_GetMagnitude
  * ----------------------------
  * Calculates the magnitude of a vector given its x and y coordinates.
  *
@@ -52,7 +50,7 @@ Vector2F NGPL_MultiplyVector(Vector2F v, float scalar) {
  *
  * returns: Magnitude of the vector
  */
-double NGPL_GetMagnitude(float x, float y)
+double NDL_GetMagnitude(float x, float y)
 {
     return sqrt(x*x+y*y);
 }

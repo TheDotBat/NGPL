@@ -19,18 +19,17 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef NGPL_UTIL_H
-#define NGPL_UTIL_H
-#include "NGPL.h"
-
+#ifndef NDL_U_H
+#define NDL_U_H
+#include "NDL.h"
 
 /*
- * Function: NGPL_CreateClock
+ * Function: NDL_CreateClock
  * -----------------------------------------
  * Creates and initializes a new Clock object with a specified maximum FPS.
  *
  * This function constructs a Clock object, setting its maximum FPS to the provided value.
- * It calls NGPL_InitClock internally to initialize the Clock's fields.
+ * It calls NDL_InitClock internally to initialize the Clock's fields.
  *
  * Parameters:
  *   maxFPS: The maximum frames per second (FPS) limit for the game clock.
@@ -38,9 +37,10 @@
  * Returns:
  *   A fully initialized Clock object.
  */
-Clock NGPL_CreateClock(int maxFPS);
+Clock NDL_CreateClock(int maxFPS);
+
 /*
- * Function: NGPL_InitClock
+ * Function: NDL_InitClock
  * -----------------------------------------
  * Initializes a Clock object with a specific maximum FPS.
  *
@@ -54,9 +54,10 @@ Clock NGPL_CreateClock(int maxFPS);
  * Returns:
  *   Void.
  */
-void NGPL_InitClock(Clock* clock, int maxFPS);
+void NDL_InitClock(Clock* clock, int maxFPS);
+
 /*
- * Function: NGPL_UpdateClock
+ * Function: NDL_UpdateClock
  * -----------------------------------------
  * Updates the Clock object each frame to track time and calculate FPS.
  *
@@ -69,9 +70,10 @@ void NGPL_InitClock(Clock* clock, int maxFPS);
  * Returns:
  *   Void.
  */
-void NGPL_UpdateClock(Clock* clock);
+void NDL_UpdateClock(Clock* clock);
+
 /*
- * Function: NGPL_GetTicks
+ * Function: NDL_GetTicks
  * -----------------------------------------
  * Retrieves the current time in milliseconds since the SDL library was initialized.
  *
@@ -84,9 +86,10 @@ void NGPL_UpdateClock(Clock* clock);
  * Returns:
  *   An unsigned 32-bit integer representing the time in milliseconds.
  */
-Uint32 NGPL_GetTicks(Clock* clock);
+Uint32 NDL_GetTicks(Clock* clock);
+
 /*
- * Function: NGPL_GetFPS
+ * Function: NDL_GetFPS
  * -----------------------------------------
  * Retrieves the current calculated frames per second (FPS) from the Clock object.
  *
@@ -99,9 +102,10 @@ Uint32 NGPL_GetTicks(Clock* clock);
  * Returns:
  *   A floating-point value representing the current FPS.
  */
-float NGPL_GetFPS(Clock* clock);
+float NDL_GetFPS(Clock* clock);
+
 /*
- * Function: NGPL_GetDeltaTime
+ * Function: NDL_GetDeltaTime
  * -----------------------------------------
  * Retrieves the time elapsed in seconds since the last frame.
  *
@@ -114,9 +118,10 @@ float NGPL_GetFPS(Clock* clock);
  * Returns:
  *   A floating-point value representing the delta time in seconds.
  */
-float NGPL_GetDeltaTime(Clock* clock);
+float NDL_GetDeltaTime(Clock* clock);
+
 /*
- * Function: NGPL_CapFPS
+ * Function: NDL_CapFPS
  * -----------------------------------------
  * Delays the next frame to cap the frame rate of your application at a specific maximum FPS.
  * 
@@ -135,48 +140,99 @@ float NGPL_GetDeltaTime(Clock* clock);
  * Returns:
  *   Void.
  */
-void NGPL_CapFPS(Clock* clock);
+void NDL_CapFPS(Clock* clock);
 
-int NGPL_IsMouseHover(int mouseX, int mouseY, int pointX, int pointY, int size);
+int NDL_IsMouseHover(int mouseX, int mouseY, int pointX, int pointY, int size);
 
-NGPL_PoolE* NGPL_CreatePoolE(int maxSize);
+char* NDL_ReadFileToString(const char* filename);
 
-void NGPL_AddToPoolE(NGPL_Entity* e, NGPL_PoolE* pool);
+Vector2F NDL_GetMouseVectorF();
 
-char* NGPL_ReadFileToString(const char* filename);
+bool NDL_IsMouseOverRigidBody(ColliderComponent* rb);
 
-Vector2F NGPL_GetMouseVectorF();
+bool NDL_IsMouseAtPoint(int x, int y);
 
-bool NGPL_IsMouseOverSprite(NGPL_Entity* entity);
+Vector2 NDL_GetWindowSize(SDL_Window* window);
 
-bool NGPL_IsMouseOverRigidBody(NGPL_RigidBody* rb);
+NDL_Camera* NDL_CreateCamera(Vector2F position, float panSpeed, float interpolation);
 
-bool NGPL_IsMouseAtPoint(int x, int y);
+// void NDL_CenterCameraOnEntity(Window win, NDL_Camera* cam, NDL_Entity* entity, float deltaTime);
 
-Vector2 NGPL_GetWindowSize(SDL_Window* window);
+// void NDL_BoxCamera(NDL_Camera* cam, NDL_Entity* entity, SDL_Rect box, float deltaTime);
 
-NGPL_Camera* NGPL_CreateCamera(Vector2F position, float panSpeed, float interpolation);
+// void NDL_PanCamera(NDL_Camera* cam, Vector2F targetPosition, float interpolation, float deltaTime);
 
-void NGPL_CenterCameraOnEntity(Window win, NGPL_Camera* cam, NGPL_Entity* entity, float deltaTime);
+/*
+ * Function: NDL_OpenController
+ * -----------------------------------------
+ * Initializes the SDL game controller subsystem and opens the first available controller.
+ *
+ * This function will attempt to find and open the first connected game controller.
+ * It initializes the SDL game controller subsystem if not already initialized.
+ *
+ * Returns:
+ *   A pointer to an SDL_GameController object if a controller is successfully opened,
+ *   NULL otherwise.
+ */
+Controller NDL_OpenController();
 
-void NGPL_BoxCamera(NGPL_Camera* cam, NGPL_Entity* entity, SDL_Rect box, float deltaTime);
+/*
+ * Function: NDL_GetPlayerActions
+ * -----------------------------------------
+ * Retrieves the current player actions based on the key state.
+ *
+ * This function checks the current state of key bindings and returns
+ * a bitwise OR of PlayerActions enum values corresponding to the actions
+ * that are currently active based on the key states.
+ *
+ * Returns:
+ *   PlayerActions: An integer representing the bitwise OR of the actions
+ *   currently being performed by the player. The value is a combination of
+ *   PLAYER_ACTION_MOVE_LEFT, PLAYER_ACTION_MOVE_RIGHT, PLAYER_ACTION_JUMP,
+ *   and PLAYER_ACTION_MENU, depending on the key states.
+ */
+PlayerActions NDL_GetPlayerActions();
 
-void NGPL_PanCamera(NGPL_Camera* cam, Vector2F targetPosition, float interpolation, float deltaTime);
+/*
+ * Function: NDL_SetKeyBinds
+ * -----------------------------------------
+ * Sets the key bindings for player actions.
+ *
+ * This function assigns SDL scancodes to various player actions including moving left,
+ * moving right, jumping, and accessing the menu. These scancodes are used to determine
+ * the player's actions in the game.
+ *
+ * Parameters:
+ *   moveLeft: SDL_Scancode for the action to move the player left.
+ *   moveRight: SDL_Scancode for the action to move the player right.
+ *   jump: SDL_Scancode for the action to make the player jump.
+ *   menu: SDL_Scancode for the action to open the game menu.
+ *
+ * Returns:
+ *   void: This function does not return a value.
+ */
+void NDL_SetKeyBinds(SDL_Scancode moveUp, SDL_Scancode moveDown, SDL_Scancode moveLeft, SDL_Scancode moveRight, SDL_Scancode jump, SDL_Scancode attack, SDL_Scancode menu);
 
-void NGPL_UpdatePoolE(NGPL_PoolE* pool);
+/*
+ * Function: NDL_CreateTexture
+ * ----------------------------
+ * Creates an SDL texture for rendering.
+ *
+ * This function creates an SDL texture using the specified width and height.
+ * The texture is intended for rendering in the provided renderer context.
+ *
+ * Parameters:
+ *   renderer: Pointer to the SDL renderer where the texture will be used.
+ *   w: Width of the texture.
+ *   h: Height of the texture.
+ *
+ * Returns:
+ *   NDL_Texture*: Pointer to the created SDL texture.
+ */
+NDL_Texture* NDL_CreateTexture(Renderer renderer, const char* fp);
 
-NGPL_PoolR* NGPL_CreatePoolR();
+// void NDL_LayoutMapData(NDL_PSpace* space, NDL_PoolE* pool, Renderer ren, const char* mapDataPath, Vector2 tileSize);
 
-void NGPL_PoolRShowGrid(NGPL_PoolR* poolR, bool showGrid);
 
-void NGPL_PoolRShowBodies(NGPL_PoolR* poolR, bool showBodies);
-
-void NGPL_PoolRSetGridColor(NGPL_PoolR* poolR, NGPL_Color color);
-
-void NGPL_PoolRSetClearColor(NGPL_PoolR* poolR, NGPL_Color color);
-
-void NGPL_PoolRSetPoolE(NGPL_PoolR* poolR, NGPL_PoolE* poolE);
-
-void NGPL_PoolRClearScreen(NGPL_PoolR* poolR, bool clearScreen);
 
 #endif

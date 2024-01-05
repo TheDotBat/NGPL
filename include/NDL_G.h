@@ -19,13 +19,13 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef NGPL_GRAPHICS_H
-#define NGPL_GRAPHICS_H
-#include "NGPL.h"
+#ifndef NDL_G_H
+#define NDL_G_H
+#include "NDL.h"
 
 
 /*
- * Function: NGPL_CreateWindow
+ * Function: NDL_CreateWindow
  * -----------------------------------------
  * Creates a new window using SDL2.
  *
@@ -35,24 +35,24 @@
  *
  * returns: Pointer to the created Window, or NULL on failure
  */
-Window NGPL_CreateWindow(int width, int height, const char* title);
+Window NDL_CreateWindow(int width, int height, const char* title);
 
 /*
- * Function: NGPL_CreateRenderer
+ * Function: NDL_CreateRenderer
  * ---------------------------------
  * Attempts to create a renderer using SDL2.
  * Will return NULL and print an error message on fail.
  *
- * window: A pointer to an SDL2 window created with NGPL_CreateWindow()
+ * window: A pointer to an SDL2 window created with NDL_CreateWindow()
  * driverIndex: An integer value indicating the rendering driver you wish to initialize. ( Use -1 to init the first one that supports your flags )
  * flags: Can be 0 or one or more valid SDL_RendererFlags OR'd together. ( Uses SDL_RENDERER_ACCELERATED by default ( Hardware acceleration ) )
  *
  * returns: A pointer to an SDL2 Renderer struct created with the passed parameters.
 */
-Renderer NGPL_CreateRenderer(Window window, int driverIndex, Uint32 flags);
+Renderer NDL_CreateRenderer(Window window, int driverIndex, Uint32 flags);
 
 /*
- * Function: NGPL_ClearScreen
+ * Function: NDL_ClearScreen
  * -----------------------------------------
  * Clears the screen with the specified color.
  *
@@ -68,10 +68,10 @@ Renderer NGPL_CreateRenderer(Window window, int driverIndex, Uint32 flags);
  * Returns:
  *   void: This function does not return a value.
  */
-void NGPL_ClearScreen(Renderer renderer, int color[4]);
+void NDL_ClearScreen(Renderer renderer, int color[4]);
 
 /*
- * Function: NGPL_SendFrame
+ * Function: NDL_SendFrame
  * -----------------------------------------
  * Presents the final rendering on the screen.
  *
@@ -85,32 +85,28 @@ void NGPL_ClearScreen(Renderer renderer, int color[4]);
  * Returns:
  *   void: This function does not return a value.
  */
-void NGPL_SendFrame(Renderer renderer);
+void NDL_SendFrame(Renderer renderer);
 
-void NGPL_BlitCircleF(Renderer renderer, int x, int y, int radius);
+void NDL_BlitCircleF(Renderer renderer, int x, int y, int radius);
 
-void NGPL_DrawEdge(Renderer ren, Edge* edge, NGPL_Color color);
+void NDL_DrawEdge(Renderer ren, NDL_Edge* edge, NDL_Color color);
 
-NGPL_Rect NGPL_CreateRect(int w, int h, float x, float y);
+NDL_Rect NDL_CreateRect(int w, int h, float x, float y);
 
-void NGPL_UpdateRect(NGPL_Rect* r);
+void NDL_UpdateRect(NDL_Rect* r);
 
-void NGPL_BlitRect(Renderer ren, NGPL_Rect* r, NGPL_Color color);
+void NDL_BlitRect(Renderer ren, NDL_Rect* r, NDL_Color color);
 
-void NGPL_PSpaceShowGrid(Renderer ren, NGPL_PSpace* space, NGPL_Color gridColor);
+void NDL_ToggleBorderless(Window window);
 
-void NGPL_EntityUpdate(NGPL_Entity* e);
+void FillRect(Renderer ren, Rect* rect, NDL_Color color);
 
-void NGPL_BlitRigidBody(Renderer ren, NGPL_RigidBody* rb, NGPL_Color color);
+void BlitColliderComponent(Renderer ren, ColliderComponent* collider, NDL_Color color);
 
-void NGPL_RenderEntitySpriteRect(Renderer ren, NGPL_Entity* e);
+void Render(RenderSystem* renSys);
 
-void NGPL_BlitPSpace(NGPL_PSpace* space, Renderer ren);
+RenderSystem* CreateRenderSystem(Renderer sdlRenderer, NDL_Color clearColor);
 
-void NGPL_RenderPoolE(Renderer ren, NGPL_PoolE* pool, NGPL_Camera* cam);
-
-void NGPL_RenderSpace(Renderer ren, NGPL_PSpace* space, NGPL_Camera* cam, NGPL_PoolR* poolR);
-
-void NGPL_ToggleBorderless(Window window);
+void SetRenderSystemPool(RenderSystem* renSys, Pool* pool);
 
 #endif
