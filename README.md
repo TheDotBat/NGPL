@@ -58,13 +58,13 @@ To verify that NDL has been successfully added to your PATH:
 
     - **You Should See This Error Message**:
 
-![NDL](https://media.discordapp.net/attachments/1132862338521894934/1190716154096910388/image.png?ex=65a2cfd5&is=65905ad5&hm=3c5524b1c07ecd1f4cf8c275fde90eb0288f1da0b6ceadf0a73c4c2dfd063385&=&format=webp&quality=lossless&width=524&height=70)
+![NDL](https://cdn.discordapp.com/attachments/1092575082125213859/1192797570632790016/image.png?ex=65aa624d&is=6597ed4d&hm=db94c5740d2c8d2320c1ff59cd7aeae0a0aea828ad1465b5151e4fb958fc1c8a&)
 
 5. Simply type the command presented in the error message. 
     - For example: ```setx NDL_DIR "C:\Path\To\NDL\NDL_x86"``` and you should be all set.
 6. Now try running compile-NDL on your project files again...
 
-![NDL](https://media.discordapp.net/attachments/1132862338521894934/1190716154310832199/image-1.png?ex=65a2cfd5&is=65905ad5&hm=c1994fca37077e90fcc997d74c5d9dd2135258ba3ee004f5dbf3bef090153355&=&format=webp&quality=lossless&width=337&height=108)
+![NDL](https://cdn.discordapp.com/attachments/1092575082125213859/1192797570934784011/image.png?ex=65aa624e&is=6597ed4e&hm=a2c2fcee92314b42d2a8e15a063dd8b8367234062ee90c7b97fc2cd29053d65f&)
 
 You should now be able to use the `compile-NDL` script from any location in the Command Prompt on your Windows system.
 
