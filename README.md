@@ -29,10 +29,18 @@ This guide provides step-by-step instructions on how to install NDL on Windows.
 2. Right-click on the downloaded file (it might be a `.zip` or `tar.gz` file) and select **Extract All...**.
 3. In the dialog that appears, choose the directory where you want to extract NDL. This will be your NDL installation directory. For example, you can create a new folder like `C:\NDL` or `D:\MyProjects\NDL`.
 
-## Step 3: Add NDL's scripts to the System PATH
+## Step 3: Add NDL's scripts to the System PATH (with install-NDL, or manually)
+## \**NOTICE*\*
+```
+- Every version of NDL comes with a powershell script named *\**install-NDL**\*.
+- This Scipt will modify your current user's environment variables and PATH.
+- It is required that you have Windows Powershell installed on your system.
 
+*** IT IS ADVISED YOU SAVE A BACKUP OF THE CONTENT OF YOUR USER PATH BEFORE RUNNING THIS SCRIPT. ***
+*** ALTHOUGH EXTENSIVE TESTING WAS DONE UNEXPECTED BEHAVIORS MAY OCCUR. ***
+```
+---
 Adding NDL's scripts to the system PATH allows you to run them from any command prompt location.
-
 1. Locate your NDL installation directory and note its **scripts** path. 
     - For example: `C:\NDL\NDL\scripts`
 2. Press the **Windows Key**, and type `Environment Variables`.

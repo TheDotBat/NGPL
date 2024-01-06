@@ -12,7 +12,7 @@
 - NDL was created to offer game developers a smooth, simple, and efficient way of construcing interactive experiences quickly.
 - Taking large inspiration from the workflow of pygame-ce, combining that ease of use with the speed and optimization opportunities that come with C.
     - *"As a developer who started with a high-level language first, my first time compiling a program was rather annoying. So i decided to make it easier." - Setoichi*
-- Something obvious that sets NDL apart from Pygame is the extensive toolchain. NDL offers a rich ECS with a simple to use Rendering API ontop of SDL2, and a fast effective Physics engine thats just as simple to play with.
+- Something obvious that sets NDL apart from Pygame is its extensive toolchain. NDL offers a rich ECS with a simple to use Rendering API ontop of SDL2, and a fast effective Physics engine thats just as simple to play with.
 - NDL ( as you could tell by the name ) is *Nebula's* Development Library... **Then who/what is Nebula?**
 
 ---
